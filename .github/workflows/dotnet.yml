@@ -46,9 +46,6 @@ jobs:
             exit 1
           fi
           
-          echo "Printing environment variables:"
-          printenv
-          echo "Exiting script with success."
           set -x
           ((version_parts[2]++))
           set -x
