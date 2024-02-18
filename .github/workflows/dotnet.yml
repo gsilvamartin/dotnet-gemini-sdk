@@ -40,6 +40,10 @@ jobs:
 
           IFS='.' read -r -a version_parts <<< "$latest_version"
           echo "Version parts array: ${version_parts[@]}"
+          if [ "${#version_parts[@]}" -lt 3 ]; then
+            echo "Error: Insufficient version parts."
+            exit 1
+          fi
           ((version_parts[2]++))
           echo "Incremented version parts array: ${version_parts[@]}"
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
