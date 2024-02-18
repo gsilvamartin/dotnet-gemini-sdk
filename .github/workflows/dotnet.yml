@@ -49,8 +49,9 @@ jobs:
           echo "Printing environment variables:"
           printenv
           echo "Exiting script with success."
-          
+          set -x
           ((version_parts[2]++))
+          set -x
           echo "Incremented version parts array: ${version_parts[@]}"
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
