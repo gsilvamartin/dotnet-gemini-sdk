@@ -13,6 +13,9 @@ public class Content
 public class Part
 {
     [JsonProperty("text")] public string Text { get; set; }
+
+    [JsonProperty("inlineData", NullValueHandling = NullValueHandling.Ignore)]
+    public InlineData? InlineData { get; set; }
 }
 
 public class GeminiMessageRequest
@@ -44,4 +47,11 @@ public class SafetySetting
     [JsonProperty("category")] public string Category { get; set; }
 
     [JsonProperty("threshold")] public string Threshold { get; set; }
+}
+
+public class InlineData
+{
+    [JsonProperty("mime_type")] public string MimeType { get; set; }
+
+    [JsonProperty("data")] public string Data { get; set; }
 }

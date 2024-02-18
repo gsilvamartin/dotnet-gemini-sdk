@@ -1,3 +1,4 @@
+using DotnetGeminiSDK.Client;
 using DotnetGeminiSDK.Config;
 using DotnetGeminiSDK.Requester;
 using DotnetGeminiSDK.Requester.Interfaces;

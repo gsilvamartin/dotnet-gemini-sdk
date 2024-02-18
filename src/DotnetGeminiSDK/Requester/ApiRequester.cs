@@ -36,12 +36,13 @@ namespace DotnetGeminiSDK.Requester
 
         private async Task<T?> HandleResponse<T>(HttpResponseMessage response)
         {
+            var content = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException($"Request error: {response.StatusCode} - {response.ReasonPhrase}");
+                throw new HttpRequestException(content);
             }
 
-            var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
         }
     }
