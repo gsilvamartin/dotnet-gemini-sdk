@@ -1,4 +1,6 @@
 using DotnetGeminiSDK.Config;
+using DotnetGeminiSDK.Requester;
+using DotnetGeminiSDK.Requester.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetGeminiSDK
@@ -8,11 +10,12 @@ namespace DotnetGeminiSDK
         public static IServiceCollection AddGeminiClient(this IServiceCollection services,
             Action<GoogleGeminiConfig> configure)
         {
-            var builder = GeminiClient.InitializeGeminiSDK();
-            configure?.Invoke(builder);
-            var client = builder.Build();
+            var config = new GoogleGeminiConfig();
+            configure?.Invoke(config);
 
-            services.AddSingleton(client);
+            services.AddSingleton(config);
+            services.AddSingleton<IApiRequester, ApiRequester>();
+            services.AddSingleton<GeminiClient>();
 
             return services;
         }
