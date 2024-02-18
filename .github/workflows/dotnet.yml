@@ -40,7 +40,7 @@ jobs:
 
           IFS='.' read -r -a version_parts <<< "$latest_version"
           echo "Version parts array: ${version_parts[@]}"
-          version_parts[2]++
+          ((${version_parts[2]++}))
           echo "Incremented version parts array: ${version_parts[@]}"
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
 
