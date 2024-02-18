@@ -1,0 +1,75 @@
+name: Build and Publish NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    outputs:
+      package_version: ${{ steps.pack.outputs.package_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 'netstandard2.1'
+
+      - name: Get latest NuGet package version
+        run: |
+          nuget_response=$(curl -s "https://api.nuget.org/v3-flatcontainer/DotnetGeminiSDK/index.json")
+
+          echo "NuGet API Response:"
+          echo "$nuget_response"
+
+          latest_version=$(echo "$nuget_response" | python -c "import sys, json; data = json.load(sys.stdin); versions = data.get('versions', []); versions = [v for v in versions if v is not None]; print(max(versions, key=lambda s: list(map(int, s.split('.')))) if versions else '')")
+
+          echo "Latest version after parsing:"
+          echo "$latest_version"
+
+          if [ -z "$latest_version" ]; then
+            echo "Error: Unable to determine the latest version from the NuGet API response."
+            exit 1
+          fi
+
+          IFS='.' read -r -a version_parts <<< "$latest_version"
+          ((version_parts[2]++))
+          new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+
+          echo "Latest version: $latest_version"
+          echo "New version: $new_version"
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+
+      - name: Show environment variable
+        run: |
+          echo "NEW_VERSION: $NEW_VERSION"
+
+      - name: Install nuget CLI
+        run: |
+          sudo curl -o /usr/local/bin/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+          alias nuget="mono /usr/local/bin/nuget.exe"
+
+      - name: Update Nuspec file
+        run: |
+          nuspec_path="nuget/dotnet-gemini.nuspec"
+          sed -i "s/<version>.*<\/version>/<version>${NEW_VERSION}<\/version>/" "$nuspec_path"
+          cat "$nuspec_path"
+
+      - name: Pack NuGet package
+        id: pack
+        run: |
+          nuspec_path="nuget/dotnet-gemini.nuspec"
+          nuget pack $nuspec_path
+          echo "::set-output name=package_version::$NEW_VERSION"
+          echo "Packaged NuGet package version: $NEW_VERSION"
+
+      - name: Push NuGet Package
+        run: nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
