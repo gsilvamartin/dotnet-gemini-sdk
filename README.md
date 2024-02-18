@@ -110,13 +110,24 @@ var response = await geminiClient.TextPrompt(messages);
 ```
 
 ### Image Prompt 🖼️
+#### Using file
 Prompt the Gemini API with an image and a text message using the `ImagePrompt` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
-var base64Image = Convert.ToBase64String(File.ReadAllBytes("path/to/your/image.jpg"));
+var image = File.ReadAllBytes("path/to/your/image.jpg");
+var response = await geminiClient.ImagePrompt("Describe this image", image, ImageMimeType.Jpeg);
+```
+
+#### Using Base64 String
+Prompt the Gemini API with an base64 string and a text message using the `ImagePrompt` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var base64Image = "image-as-base64";
 var response = await geminiClient.ImagePrompt("Describe this image", base64Image, ImageMimeType.Jpeg);
 ```
+
 
 ## Contributing 🤝
 Contributions are welcome! Feel free to open issues or pull requests to enhance the SDK.
