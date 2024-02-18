@@ -9,6 +9,9 @@ using Part = DotnetGeminiSDK.Model.Request.Part;
 
 namespace DotnetGeminiSDK.Client;
 
+/// <summary>
+/// Class to interact with Google Gemini API
+/// </summary>
 public class GeminiClient : IGeminiClient
 {
     private readonly IApiRequester _apiRequester;
@@ -21,11 +24,14 @@ public class GeminiClient : IGeminiClient
     }
 
     /// <summary>
-    /// Send a message to the Google Gemini API
+    /// Send a message to be processed using Google Gemini API,
+    /// the method returns a GeminiMessageResponse with all the response fields from api
+    ///
+    /// REF: https://ai.google.dev/tutorials/rest_quickstart#text-only_input
     /// </summary>
     /// <param name="message"></param>
-    /// <param name="generationConfig"></param>
-    /// <param name="safetySetting"></param>
+    /// <param name="generationConfig">A optional generation config</param>
+    /// <param name="safetySetting">A optional safety setting</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
     public async Task<GeminiMessageResponse?> TextPrompt(
@@ -49,13 +55,15 @@ public class GeminiClient : IGeminiClient
     }
 
     /// <summary>
-    /// Send a message to be processed using Google Gemini API,
+    /// Send multiple messages to be processed using Google Gemini API,
     /// the method returns a GeminiMessageResponse with all the response fields from api
+    ///
+    /// REF: https://ai.google.dev/tutorials/rest_quickstart#text-only_input
     /// </summary>
-    /// <param name="messages"></param>
-    /// <param name="generationConfig"></param>
-    /// <param name="safetySetting"></param>
-    /// <returns></returns>
+    /// <param name="messages">Messages to be processed as content model</param>
+    /// <param name="generationConfig">A optional generation config</param>
+    /// <param name="safetySetting">A optional safety setting</param>
+    /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="Exception"></exception>
     public async Task<GeminiMessageResponse?> TextPrompt(
@@ -87,7 +95,7 @@ public class GeminiClient : IGeminiClient
     /// <param name="message">Message to be processed</param>
     /// <param name="image">Image as array of bytes format</param>
     /// <param name="mimeType">Mime type of the image</param>
-    /// <returns></returns>
+    /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="Exception"></exception>
     public async Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType mimeType)

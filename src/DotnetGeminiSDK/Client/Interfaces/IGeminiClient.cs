@@ -5,6 +5,9 @@ using Content = DotnetGeminiSDK.Model.Request.Content;
 
 namespace DotnetGeminiSDK.Client.Interfaces;
 
+/// <summary>
+/// The GeminiClient interface provides a set of methods to interact with Google Gemini API.
+/// </summary>
 public interface IGeminiClient
 {
     Task<GeminiMessageResponse?> TextPrompt(
