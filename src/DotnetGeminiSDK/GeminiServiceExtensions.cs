@@ -1,4 +1,5 @@
 using DotnetGeminiSDK.Client;
+using DotnetGeminiSDK.Client.Interfaces;
 using DotnetGeminiSDK.Config;
 using DotnetGeminiSDK.Requester;
 using DotnetGeminiSDK.Requester.Interfaces;
@@ -29,7 +30,7 @@ public static class GeminiServiceExtensions
 
         services.AddSingleton(config);
         services.AddSingleton<IApiRequester, ApiRequester>();
-        services.AddSingleton<GeminiClient>();
+        services.AddSingleton<IGeminiClient, GeminiClient>();
 
         return services;
     }
