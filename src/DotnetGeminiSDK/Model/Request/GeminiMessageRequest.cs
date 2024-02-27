@@ -22,10 +22,10 @@ public class GeminiMessageRequest
 {
     [JsonProperty("contents")] public List<Content> Contents { get; set; }
 
-    [JsonProperty("generationconfig", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("generationConfig", NullValueHandling = NullValueHandling.Ignore)]
     public GenerationConfig? GenerationConfig { get; set; }
 
-    [JsonProperty("safetysetting", NullValueHandling = NullValueHandling.Ignore)]
+    [JsonProperty("safetySetting", NullValueHandling = NullValueHandling.Ignore)]
     public SafetySetting? SafetySetting { get; set; }
 }
 
