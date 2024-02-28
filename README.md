@@ -1,4 +1,6 @@
-# DotnetGeminiSDK 🚀
+# DotnetGeminiSDK 
+
+![NuGet Version](https://img.shields.io/nuget/v/DotnetGeminiSDK) ![NuGet Downloads](https://img.shields.io/nuget/dt/DotnetGeminiSDK)
 
 Welcome to DotnetGeminiSDK, a .NET SDK for interacting with the Google Gemini API. This SDK empowers developers to harness the capabilities of machine learning models to generate creative content effortlessly.
 
