@@ -85,6 +85,19 @@ var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var response = await geminiClient.TextPrompt("Write a story about a magic backpack");
 ```
 
+### Stream Text Prompt 🔁
+Prompt the Gemini API with a text message using the `StreamTextPrompt` method:
+
+> [!NOTE]
+> This diffears from the text prompt, it receives the response as string and in chunks.
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.StreamTextPrompt("Write a story about a magic backpack", (chunk) => {
+  Console.WriteLine("Process your chunk of response here");
+});
+```
+
 ### Multiple Text Prompt 📚
 Prompt the Gemini API with multiple text messages using the `TextPrompt` method with a list of `Content` objects:
 
@@ -127,7 +140,6 @@ var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var base64Image = "image-as-base64";
 var response = await geminiClient.ImagePrompt("Describe this image", base64Image, ImageMimeType.Jpeg);
 ```
-
 
 ## Contributing 🤝
 Contributions are welcome! Feel free to open issues or pull requests to enhance the SDK.
