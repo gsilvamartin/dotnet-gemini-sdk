@@ -101,11 +101,13 @@ namespace DotnetGeminiSDK.Client
         /// <param name="message">Message to be processed as content model</param>
         /// <param name="generationConfig">A optional generation config</param>
         /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="callback"> A callback to be called when the response is received</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        public Task StreamTextPrompt(
             string message,
+            Action<GeminiMessageResponse> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
@@ -116,7 +118,7 @@ namespace DotnetGeminiSDK.Client
                 var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
                 var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
-                return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request);
+                return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request, callback);
             }
             catch (Exception e)
             {
@@ -135,11 +137,13 @@ namespace DotnetGeminiSDK.Client
         /// <param name="messages">Messages to be processed as content model</param>
         /// <param name="generationConfig">A optional generation config</param>
         /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="callback"> A callback to be called when the response is received</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        public Task StreamTextPrompt(
             List<Content> messages,
+            Action<GeminiMessageResponse> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
@@ -150,7 +154,7 @@ namespace DotnetGeminiSDK.Client
                 var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
                 var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-                return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request);
+                return _apiRequester.PostStream(promptUrl, request, callback);
             }
             catch (Exception e)
             {

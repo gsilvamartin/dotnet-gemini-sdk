@@ -25,14 +25,16 @@ namespace DotnetGeminiSDK.Client.Interfaces
             SafetySetting? safetySetting = null
         );
 
-        IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        Task StreamTextPrompt(
             string message,
+            Action<GeminiMessageResponse> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null
         );
 
-        IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        Task StreamTextPrompt(
             List<Content> messages,
+            Action<GeminiMessageResponse> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null
         );
