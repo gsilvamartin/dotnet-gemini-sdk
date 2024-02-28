@@ -87,6 +87,74 @@ public class GeminiClient : IGeminiClient
     }
 
     /// <summary>
+    /// Send a message to be processed using Google Gemini API.
+    ///
+    /// The method returns a GeminiMessageResponse with all the response fields from api.
+    /// The response is streamed as an observable.
+    ///
+    /// REF: https://ai.google.dev/tutorials/rest_quickstart#text-only_input
+    /// </summary>
+    /// <param name="message">Message to be processed as content model</param>
+    /// <param name="generationConfig">A optional generation config</param>
+    /// <param name="safetySetting">A optional safety setting</param>
+    /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
+    public IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        string message,
+        GenerationConfig? generationConfig = null,
+        SafetySetting? safetySetting = null)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
+
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(message, generationConfig, safetySetting);
+
+            return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Unexpected error occurred.", e);
+        }
+    }
+
+    /// <summary>
+    /// Send a message to be processed using Google Gemini API.
+    ///
+    /// The method returns a GeminiMessageResponse with all the response fields from api.
+    /// The response is streamed as an observable.
+    ///
+    /// REF: https://ai.google.dev/tutorials/rest_quickstart#text-only_input
+    /// </summary>
+    /// <param name="messages">Messages to be processed as content model</param>
+    /// <param name="generationConfig">A optional generation config</param>
+    /// <param name="safetySetting">A optional safety setting</param>
+    /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="Exception"></exception>
+    public IObservable<GeminiMessageResponse?> StreamTextPrompt(
+        List<Content> messages,
+        GenerationConfig? generationConfig = null,
+        SafetySetting? safetySetting = null)
+    {
+        try
+        {
+            if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
+
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+
+            return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Unexpected error occurred.", e);
+        }
+    }
+
+    /// <summary>
     /// Send a message and a image to be processed using Google Gemini API,
     /// the method returns a GeminiMessageResponse with all the response fields from api
     ///
