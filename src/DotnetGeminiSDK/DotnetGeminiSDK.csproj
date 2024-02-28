@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <None Update="README.md" Pack="true" PackagePath="" />
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <ImplicitUsings>false</ImplicitUsings>
         <Nullable>enable</Nullable>
