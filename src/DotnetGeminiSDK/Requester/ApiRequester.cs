@@ -52,33 +52,29 @@ namespace DotnetGeminiSDK.Requester
         /// </summary>
         /// <param name="url">Url to be requested</param>
         /// <param name="data">Data containing body to send</param>
+        /// <param name="callback"> A callback to be called when the response is received</param>
         /// <typeparam name="T">Return type of method</typeparam>
         /// <returns>Observable post stream result</returns>
-        public IObservable<T> PostStream<T>(string url, object data)
+        public async Task PostStream<T>(string url, object data, Action<T> callback)
         {
-            return Observable.Create<T>(async observer =>
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+
+            using var response = await _httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
             {
-                var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                using var reader = new StreamReader(responseStream);
 
-                using var response = await _httpClient.PostAsync(url, content);
-
-                if (response.IsSuccessStatusCode)
+                while (!reader.EndOfStream)
                 {
-                    using var responseStream = await response.Content.ReadAsStreamAsync();
-                    using var reader = new StreamReader(responseStream);
-
-                    while (!reader.EndOfStream)
-                    {
-                        observer.OnNext(await HandleResponse<T>(reader));
-                    }
-
-                    observer.OnCompleted();
+                    callback(await HandleResponse<T>(reader));
                 }
-                else
-                {
-                    observer.OnError(new Exception($"Request error: {response.Content.ReadAsStringAsync().Result}"));
-                }
-            });
+            }
+            else
+            {
+                throw new Exception("Unhandled error from API " + response.Content.ReadAsStreamAsync().Result);
+            }
         }
 
         /// <summary>
