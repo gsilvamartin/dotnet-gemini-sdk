@@ -1,14 +1,15 @@
-namespace DotnetGeminiSDK.Model;
-
-/// <summary>
-/// Enum containing the supported image mime types.
-/// </summary>
-public enum ImageMimeType
+namespace DotnetGeminiSDK.Model
 {
-    Jpg,
-    Jpeg,
-    Png,
-    Webp,
-    Heic,
-    Heif
+    /// <summary>
+    /// Enum containing the supported image mime types.
+    /// </summary>
+    public enum ImageMimeType
+    {
+        Jpg,
+        Jpeg,
+        Png,
+        Webp,
+        Heic,
+        Heif
+    }
 }
