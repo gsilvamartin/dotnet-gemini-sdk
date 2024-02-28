@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
         <ImplicitUsings>false</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
