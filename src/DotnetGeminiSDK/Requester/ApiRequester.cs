@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using System.Net.Http;
-using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DotnetGeminiSDK.Requester.Interfaces;
@@ -53,22 +51,23 @@ namespace DotnetGeminiSDK.Requester
         /// <param name="url">Url to be requested</param>
         /// <param name="data">Data containing body to send</param>
         /// <param name="callback"> A callback to be called when the response is received</param>
-        /// <typeparam name="T">Return type of method</typeparam>
-        /// <returns>Observable post stream result</returns>
-        public async Task PostStream<T>(string url, object data, Action<T> callback)
+        public async Task PostStream(string url, object data, Action<string> callback)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
 
-            using var response = await _httpClient.PostAsync(url, content);
+            using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = content };
+            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.IsSuccessStatusCode)
             {
+                int bytesRead;
+                var buffer = new byte[8192];
                 using var responseStream = await response.Content.ReadAsStreamAsync();
-                using var reader = new StreamReader(responseStream);
 
-                while (!reader.EndOfStream)
+                while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    callback(await HandleResponse<T>(reader));
+                    var chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    callback(chunk);
                 }
             }
             else
@@ -118,20 +117,6 @@ namespace DotnetGeminiSDK.Requester
             {
                 throw new HttpRequestException(content);
             }
-
-            return JsonConvert.DeserializeObject<T>(content) ??
-                   throw new Exception("Cannot deserialize response from API");
-        }
-
-        /// <summary>
-        /// Handle the response from the API, deserializing the content from a stream
-        /// </summary>
-        /// <param name="streamReader">The stream reader</param>
-        /// <typeparam name="T">Return type of method</typeparam>
-        /// <returns></returns>
-        private static async Task<T> HandleResponse<T>(TextReader streamReader)
-        {
-            var content = await streamReader.ReadLineAsync();
 
             return JsonConvert.DeserializeObject<T>(content) ??
                    throw new Exception("Cannot deserialize response from API");

@@ -10,7 +10,7 @@ namespace DotnetGeminiSDK.Requester.Interfaces
     {
         Task<T> GetAsync<T>(string url);
         Task<T> PostAsync<T>(string url, object data);
-        Task PostStream<T>(string url, object data, Action<T> callback);
+        Task PostStream(string url, object data, Action<string> callback);
         Task<T> PutAsync<T>(string url, object data);
         Task<T> DeleteAsync<T>(string url);
     }
