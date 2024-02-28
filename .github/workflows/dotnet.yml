@@ -75,7 +75,7 @@ jobs:
         id: pack
         run: |
           nuspec_path="nuget/dotnet-gemini.nuspec"
-          nuget pack $nuspec_path
+          nuget pack src/DotnetGeminiSDK/DotnetGeminiSDK.csproj --configuration Release --output nupkg -p:PackageVersion=$NEW_VERSION
           echo "::set-output name=package_version::$NEW_VERSION"
           echo "Packaged NuGet package version: $NEW_VERSION"
 
