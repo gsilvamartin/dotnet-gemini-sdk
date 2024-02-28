@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <None Update="README.md" Pack="true" PackagePath="" />
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <ImplicitUsings>false</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -11,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Update="README.md" Pack="true" PackagePath="" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="System.Reactive" Version="6.0.0" />
