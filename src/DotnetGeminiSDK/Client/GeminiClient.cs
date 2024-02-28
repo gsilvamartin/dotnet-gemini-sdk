@@ -107,7 +107,7 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="Exception"></exception>
         public Task StreamTextPrompt(
             string message,
-            Action<GeminiMessageResponse> callback,
+            Action<string> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
@@ -118,7 +118,7 @@ namespace DotnetGeminiSDK.Client
                 var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
                 var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
-                return _apiRequester.PostStream<GeminiMessageResponse>(promptUrl, request, callback);
+                return _apiRequester.PostStream(promptUrl, request, callback);
             }
             catch (Exception e)
             {
@@ -143,7 +143,7 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="Exception"></exception>
         public Task StreamTextPrompt(
             List<Content> messages,
-            Action<GeminiMessageResponse> callback,
+            Action<string> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {

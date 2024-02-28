@@ -27,14 +27,14 @@ namespace DotnetGeminiSDK.Client.Interfaces
 
         Task StreamTextPrompt(
             string message,
-            Action<GeminiMessageResponse> callback,
+            Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null
         );
 
         Task StreamTextPrompt(
             List<Content> messages,
-            Action<GeminiMessageResponse> callback,
+            Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null
         );
