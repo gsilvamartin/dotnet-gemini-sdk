@@ -137,6 +137,17 @@ var messages = new List<Content>
 var response = await geminiClient.TextPrompt(messages);
 ```
 
+### Count Tokens 1️⃣
+Prompt the Gemini API with a text message using the `CountTokens` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.CountTokens("Write a story about a magic backpack");
+```
+
+> [!NOTE]
+> You can use list of messages and list of content to call this method too.
+
 ### Image Prompt 🖼️
 #### Using file
 Prompt the Gemini API with an image and a text message using the `ImagePrompt` method:
