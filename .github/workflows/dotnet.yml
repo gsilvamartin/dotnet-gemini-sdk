@@ -3,7 +3,7 @@ name: Build and Publish NuGet Package
 on:
   push:
     branches:
-      - main
+      - release/*
 
 jobs:
   build-and-push:
