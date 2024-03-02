@@ -25,6 +25,24 @@ namespace DotnetGeminiSDK.Client.Interfaces
             SafetySetting? safetySetting = null
         );
 
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            string message,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
+
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            List<string> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
+
+        Task<GeminiCountTokenMessageResponse?> CountTokens(
+            List<Content> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null
+        );
+
         Task StreamTextPrompt(
             string message,
             Action<string?> callback,

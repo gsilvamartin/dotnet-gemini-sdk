@@ -75,19 +75,82 @@ namespace DotnetGeminiSDK.Client
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
-            try
-            {
-                if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
+            if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
-                var promptUrl = $"{_config.TextBaseUrl}:generateContent?key={_config.ApiKey}";
-                var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+            var promptUrl = $"{_config.TextBaseUrl}:generateContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-                return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unexpected error occurred.", e);
-            }
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Send a message to be processed using Google Gemini API.
+        ///
+        /// The method returns all the tokens count from the message.
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#count_tokens
+        /// </summary>
+        /// <param name="message">Message to be processed</param>
+        /// <param name="generationConfig">A optional generation config</param>
+        /// <param name="safetySetting">A optional safety setting</param>
+        /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<GeminiCountTokenMessageResponse?> CountTokens(string message,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null)
+        {
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
+
+            var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(message, generationConfig, safetySetting);
+
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Send a message to be processed using Google Gemini API.
+        ///
+        /// The method returns all the tokens count from the message.
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#count_tokens
+        /// </summary>
+        /// <param name="messages">Messages to be processed</param>
+        /// <param name="generationConfig">A optional generation config</param>
+        /// <param name="safetySetting">A optional safety setting</param>
+        /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<string> messages,
+            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null)
+        {
+            if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
+
+            var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Send a message to be processed using Google Gemini API.
+        ///
+        /// The method returns all the tokens count from the message.
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#count_tokens
+        /// </summary>
+        /// <param name="messages">Messages to be processed as content model</param>
+        /// <param name="generationConfig">A optional generation config</param>
+        /// <param name="safetySetting">A optional safety setting</param>
+        /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<Content> messages,
+            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null)
+        {
+            if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
+
+            var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
         }
 
         /// <summary>
@@ -111,19 +174,12 @@ namespace DotnetGeminiSDK.Client
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
-                var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
-                var request = BuildGeminiRequest(message, generationConfig, safetySetting);
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
-                return _apiRequester.PostStream(promptUrl, request, callback);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unexpected error occurred.", e);
-            }
+            return _apiRequester.PostStream(promptUrl, request, callback);
         }
 
         /// <summary>
@@ -147,19 +203,12 @@ namespace DotnetGeminiSDK.Client
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null)
         {
-            try
-            {
-                if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
+            if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
-                var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
-                var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-                return _apiRequester.PostStream(promptUrl, request, callback);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unexpected error occurred.", e);
-            }
+            return _apiRequester.PostStream(promptUrl, request, callback);
         }
 
         /// <summary>
@@ -176,21 +225,14 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="Exception"></exception>
         public async Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType mimeType)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
-                if (image.Length == 0) throw new ArgumentException("Image cannot be empty.");
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
+            if (image.Length == 0) throw new ArgumentException("Image cannot be empty.");
 
-                var mimeTypeString = GetMimeTypeString(mimeType);
-                var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
-                var request = BuildImageGeminiRequest(message, Convert.ToBase64String(image), mimeTypeString);
+            var mimeTypeString = GetMimeTypeString(mimeType);
+            var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
+            var request = BuildImageGeminiRequest(message, Convert.ToBase64String(image), mimeTypeString);
 
-                return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unexpected error occurred.", e);
-            }
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
         }
 
         /// <summary>
@@ -208,21 +250,14 @@ namespace DotnetGeminiSDK.Client
         public async Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image,
             ImageMimeType mimeType)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
-                if (string.IsNullOrEmpty(base64Image)) throw new ArgumentException("Image cannot be empty.");
+            if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
+            if (string.IsNullOrEmpty(base64Image)) throw new ArgumentException("Image cannot be empty.");
 
-                var mimeTypeString = GetMimeTypeString(mimeType);
-                var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
-                var request = BuildImageGeminiRequest(message, base64Image, mimeTypeString);
+            var mimeTypeString = GetMimeTypeString(mimeType);
+            var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
+            var request = BuildImageGeminiRequest(message, base64Image, mimeTypeString);
 
-                return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unexpected error occurred.", e);
-            }
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
         }
 
         /// <summary>
@@ -319,6 +354,31 @@ namespace DotnetGeminiSDK.Client
                                 }
                         }
                     },
+                GenerationConfig = generationConfig,
+                SafetySetting = safetySetting
+            };
+        }
+
+        /// <summary>
+        /// Build a GeminiMessageRequest object from a list of string messages
+        /// </summary>
+        /// <param name="messages">Messages to be processed</param>
+        /// <param name="generationConfig">A optional generation config</param>
+        /// <param name="safetySetting">A optional safety setting</param>
+        /// <returns></returns>
+        private static GeminiMessageRequest BuildGeminiRequest(
+            IEnumerable<string> messages,
+            GenerationConfig? generationConfig = null,
+            SafetySetting? safetySetting = null)
+        {
+            var content = new Content
+            {
+                Parts = messages.Select(message => new Part { Text = message }).ToList()
+            };
+
+            return new GeminiMessageRequest
+            {
+                Contents = new List<Content> { content },
                 GenerationConfig = generationConfig,
                 SafetySetting = safetySetting
             };
