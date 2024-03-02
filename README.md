@@ -85,7 +85,7 @@ public class YourClass
 - [x] Stream Text Prompt
 - [x] Multiple Text Prompt
 - [x] Image Prompt
-- [ ] Counting Tokens
+- [x] Counting Tokens
 - [ ] Embedding
 - [ ] Batch Embedding
 - [ ] Get Model
