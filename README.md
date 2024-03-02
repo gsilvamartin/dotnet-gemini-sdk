@@ -79,6 +79,18 @@ public class YourClass
 }
 ```
 
+## Implemented features 👾
+
+- [x] Text Prompt
+- [x] Stream Text Prompt
+- [x] Multiple Text Prompt
+- [x] Image Prompt
+- [ ] Counting Tokens
+- [ ] Embedding
+- [ ] Batch Embedding
+- [ ] Get Model
+- [ ] List Models
+
 ## Usage 🚀
 ### Text Prompt 📝
 Prompt the Gemini API with a text message using the `TextPrompt` method:
