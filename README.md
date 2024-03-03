@@ -164,7 +164,7 @@ Prompt the Gemini API with an base64 string and a text message using the `ImageP
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var base64Image = "image-as-base64";
-var response = await geminiClient.ImagePrompt("Describe this image", base64Image, ImageMimeType.Jpeg);
+var response = await geminiClient.ImagePrompt("Describe this image in details", base64Image, ImageMimeType.Jpeg);
 ```
 
 ## Contributing 🤝
