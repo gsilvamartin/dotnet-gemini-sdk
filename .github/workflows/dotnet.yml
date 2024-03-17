@@ -28,29 +28,7 @@ jobs:
           echo "NuGet API Response:"
           echo "$nuget_response"
 
-          latest_version=$(echo "$nuget_response" | python -c "import sys, json; data = json.load(sys.stdin); versions = data.get('versions', []); versions = [v for v in versions if v is not None]; print(max(versions, key=lambda s: list(map(int, s.split('.')))) if versions else '')")
-
-          echo "Latest version after parsing:"
-          echo "$latest_version"
-
-          if [ -z "$latest_version" ]; then
-            echo "Error: Unable to determine the latest version from the NuGet API response."
-            exit 1
-          fi
-
-          IFS='.' read -r -a version_parts <<< "$latest_version"
-          echo "Version parts array: ${version_parts[@]}"
-          
-          if [ "${#version_parts[@]}" -lt 3 ]; then
-            echo "Error: Insufficient version parts."
-            exit 1
-          fi
-          
-          set -x
-          ((version_parts[2]++))
-          set -x
-          echo "Incremented version parts array: ${version_parts[@]}"
-          new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+          new_version="1.0.12"
 
           echo "Latest version: $latest_version"
           echo "New version: $new_version"
