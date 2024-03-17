@@ -60,5 +60,9 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
 
         Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image, ImageMimeType imageMimeType);
+        
+        Task<GeminiModelResponse?> GetModel(string modelName);
+
+        Task<RootGeminiModelResponse> GetModels();
     }
 }

@@ -261,6 +261,35 @@ namespace DotnetGeminiSDK.Client
         }
 
         /// <summary>
+        /// Get a model from Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#get_model
+        /// </summary>
+        /// <param name="modelName">Model name to find</param>
+        /// <returns></returns>
+        /// <returns>A GeminiModelResponse containing the model information</returns>
+        public async Task<GeminiModelResponse?> GetModel(string modelName)
+        {
+            if (string.IsNullOrEmpty(modelName)) throw new ArgumentException("Model name cannot be empty.");
+
+            var modelUrl = $"{_config.ModelBaseUrl}/{modelName}?key={_config.ApiKey}";
+            return await _apiRequester.GetAsync<GeminiModelResponse>(modelUrl);
+        }
+
+        /// <summary>
+        /// Get all models from Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#get_model
+        /// </summary>
+        /// <returns>A List of GeminiModelResponse containing the model information</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<RootGeminiModelResponse> GetModels()
+        {
+            var modelUrl = $"{_config.ModelBaseUrl}?key={_config.ApiKey}";
+            return await _apiRequester.GetAsync<RootGeminiModelResponse>(modelUrl);
+        }
+
+        /// <summary>
         /// Build a GeminiMessageRequest object to process image from a string message, base 64 and mimetype
         /// </summary>
         /// <param name="message">Message to be processed</param>
