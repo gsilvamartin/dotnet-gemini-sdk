@@ -11,6 +11,8 @@ Welcome to DotnetGeminiSDK, a .NET SDK for interacting with the Google Gemini AP
   - [Text Prompt](#text-prompt)
   - [Stream Text Prompt](#stream-text-prompt)
   - [Multiple Text Prompt](#multiple-text-prompt)
+  - [Get Model](#get-model)
+  - [Get All Models](#get-models)
   - [Image Prompt](#image-prompt)
   - [Exception Handling](#exception-handling)
 - [Contributing](#contributing)
@@ -86,10 +88,10 @@ public class YourClass
 - [x] Multiple Text Prompt
 - [x] Image Prompt
 - [x] Counting Tokens
+- [x] Get Model
+- [x] List Models
 - [ ] Embedding
 - [ ] Batch Embedding
-- [ ] Get Model
-- [ ] List Models
 
 ## Usage 🚀
 ### Text Prompt 📝
@@ -135,6 +137,22 @@ var messages = new List<Content>
 };
 
 var response = await geminiClient.TextPrompt(messages);
+```
+
+### Get Model 📒
+Get the specific model details of Gemini using `GetModel` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.GetModel("gemini-model-v1");
+```
+
+### List all models 🔖
+Get all models using `GetModels` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.GetModels();
 ```
 
 ### Count Tokens 1️⃣
