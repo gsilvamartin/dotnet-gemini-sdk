@@ -148,7 +148,7 @@ var response = await geminiClient.GetModel("gemini-model-v1");
 ```
 
 ### List all models 🔖
-Get all models using `GetModels` method:
+Get all Gemini models using `GetModels` method:
 
 ```csharp
 var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
