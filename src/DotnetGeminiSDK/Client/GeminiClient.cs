@@ -7,6 +7,7 @@ using DotnetGeminiSDK.Config;
 using DotnetGeminiSDK.Model;
 using DotnetGeminiSDK.Model.Request;
 using DotnetGeminiSDK.Model.Response;
+using DotnetGeminiSDK.Requester;
 using DotnetGeminiSDK.Requester.Interfaces;
 using Content = DotnetGeminiSDK.Model.Request.Content;
 using Part = DotnetGeminiSDK.Model.Request.Part;
@@ -21,6 +22,21 @@ namespace DotnetGeminiSDK.Client
         private readonly IApiRequester _apiRequester;
         private readonly GoogleGeminiConfig _config;
 
+        /// <summary>
+        /// Constructor to configure client using GoogleGeminiConfig
+        /// </summary>
+        /// <param name="config">Google gemini config model</param>
+        public GeminiClient(GoogleGeminiConfig config)
+        {
+            _config = config;
+            _apiRequester = new ApiRequester();
+        }
+        
+        /// <summary>
+        /// Constructor to configure client using dependency injection
+        /// </summary>
+        /// <param name="config">Google gemini config model</param>
+        /// <param name="apiRequester">Api Requester injected instance</param>
         public GeminiClient(GoogleGeminiConfig config, IApiRequester apiRequester)
         {
             _config = config;
