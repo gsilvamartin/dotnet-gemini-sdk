@@ -92,8 +92,8 @@ public class YourClass
 - [x] Counting Tokens
 - [x] Get Model
 - [x] List Models
-- [ ] Embedding
-- [ ] Batch Embedding
+- [x] Embedding
+- [x] Batch Embedding
 
 ## Usage 🚀
 ### Text Prompt 📝
