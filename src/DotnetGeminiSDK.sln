@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetGeminiSDK", "DotnetGeminiSDK\DotnetGeminiSDK.csproj", "{A87E3641-6F47-41AD-BC4C-8D1338FCAD55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{26CC957E-F287-4A36-B7C3-75A31E8F2A56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{A87E3641-6F47-41AD-BC4C-8D1338FCAD55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A87E3641-6F47-41AD-BC4C-8D1338FCAD55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A87E3641-6F47-41AD-BC4C-8D1338FCAD55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26CC957E-F287-4A36-B7C3-75A31E8F2A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26CC957E-F287-4A36-B7C3-75A31E8F2A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26CC957E-F287-4A36-B7C3-75A31E8F2A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26CC957E-F287-4A36-B7C3-75A31E8F2A56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
