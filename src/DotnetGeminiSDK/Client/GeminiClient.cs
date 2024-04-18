@@ -282,11 +282,108 @@ namespace DotnetGeminiSDK.Client
         /// REF: https://ai.google.dev/tutorials/rest_quickstart#get_model
         /// </summary>
         /// <returns>A List of GeminiModelResponse containing the model information</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<RootGeminiModelResponse> GetModels()
+        public async Task<RootGeminiModelResponse?> GetModels()
         {
             var modelUrl = $"{_config.ModelBaseUrl}?key={_config.ApiKey}";
             return await _apiRequester.GetAsync<RootGeminiModelResponse>(modelUrl);
+        }
+
+        /// <summary>
+        /// Get the embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="model"></param>
+        /// <returns>Return GeminiRootEmbeddingResponse containing the batch response for API</returns>
+        public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
+            var request = BuildEmbeddedGeminiRequest(message, model);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+        }
+
+
+        /// <summary>
+        /// Get the embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message">Messages to be processed</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>Return GeminiRootEmbeddingResponse containing the batch response for API</returns>
+        public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
+            var request = BuildEmbeddedGeminiRequest(message, model);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Get the embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(message);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Get the batch embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message">Message to be processed</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
+        public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
+            var request = BuildEmbeddedGeminiRequest(message, model);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Get the batch embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message">Messages to be processed</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
+        public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
+            var request = BuildEmbeddedGeminiRequest(message, model);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
+        }
+
+        /// <summary>
+        /// Get the batch embedding of a message using Google Gemini API
+        ///
+        /// REF: https://ai.google.dev/tutorials/rest_quickstart#embedding
+        /// </summary>
+        /// <param name="message">Messages to be processed</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
+        public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message,
+            string model = "models/embedding-001")
+        {
+            var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
+            var request = BuildGeminiRequest(message);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
         }
 
         /// <summary>
@@ -410,6 +507,103 @@ namespace DotnetGeminiSDK.Client
                 Contents = new List<Content> { content },
                 GenerationConfig = generationConfig,
                 SafetySetting = safetySetting
+            };
+        }
+
+        /// <summary>
+        /// Build a GeminiMessageRequest object using a single message and model
+        /// </summary>
+        /// <param name="message">Message to be processed</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>A GeminiEmbeddedMessageRequest model</returns>
+        private static GeminiEmbeddedMessageRequest BuildEmbeddedGeminiRequest(
+            string message,
+            string model)
+        {
+            return new GeminiEmbeddedMessageRequest
+            {
+                Model = model,
+                Content = new Content
+                {
+                    Parts = new List<Part>
+                    {
+                        new Part
+                        {
+                            Text = message
+                        }
+                    }
+                }
+            };
+        }
+
+        /// <summary>
+        /// Build a GeminiEmbeddedMessageRequest object from a list of string messages
+        /// </summary>
+        /// <param name="messages">List of messages</param>
+        /// <param name="model">Model to be used</param>
+        /// <returns>A GeminiEmbeddedMessageRequest model</returns>
+        private static GeminiEmbeddedMessageRequest BuildEmbeddedGeminiRequest(
+            IEnumerable<string> messages,
+            string model)
+        {
+            return new GeminiEmbeddedMessageRequest
+            {
+                Model = model,
+                Content = new Content
+                {
+                    Parts = messages.Select(message => new Part { Text = message }).ToList()
+                }
+            };
+        }
+
+        /// <summary>
+        /// Build a GeminiEmbeddedMultipleRequest object from a list of list string messages
+        /// </summary>
+        /// <param name="messages">List of list messages</param>
+        /// <param name="model">List of models</param>
+        /// <returns>A GeminiEmbeddedMultipleRequest model</returns>
+        public static GeminiEmbeddedMultipleRequest BuildEmbeddedMultipleGeminiRequest(
+            IEnumerable<IEnumerable<string>> messages,
+            IEnumerable<string> model)
+        {
+            return new GeminiEmbeddedMultipleRequest
+            {
+                Requests = messages.Select((message, index) => new GeminiEmbeddedMessageRequest
+                {
+                    Model = model.ElementAt(index),
+                    Content = new Content
+                    {
+                        Parts = message.Select(m => new Part { Text = m }).ToList()
+                    }
+                }).ToList()
+            };
+        }
+
+        /// <summary>
+        /// Build a GeminiEmbeddedMultipleRequest object from a list of string messages
+        /// </summary>
+        /// <param name="messages">List of the messages</param>
+        /// <param name="model">List of the models</param>
+        /// <returns>A GeminiEmbeddedMultipleRequest model</returns>
+        public static GeminiEmbeddedMultipleRequest BuildEmbeddedMultipleGeminiRequest(IEnumerable<string> messages,
+            IEnumerable<string> model)
+        {
+            return new GeminiEmbeddedMultipleRequest
+            {
+                Requests = messages.Select((message, index) => new GeminiEmbeddedMessageRequest
+                {
+                    Model = model.ElementAt(index),
+                    Content = new Content
+                    {
+                        Parts = new List<Part>
+                        {
+                            new Part
+                            {
+                                Text = message
+                            }
+                        }
+                    }
+                }).ToList()
             };
         }
 

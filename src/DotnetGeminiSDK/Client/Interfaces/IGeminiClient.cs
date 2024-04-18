@@ -63,6 +63,18 @@ namespace DotnetGeminiSDK.Client.Interfaces
         
         Task<GeminiModelResponse?> GetModel(string modelName);
 
-        Task<RootGeminiModelResponse> GetModels();
+        Task<RootGeminiModelResponse?> GetModels();
+
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message, string model = "models/embedding-001");
+        
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
+        
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
+        
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message, string model = "models/embedding-001");
+        
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
+        
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
     }
 }

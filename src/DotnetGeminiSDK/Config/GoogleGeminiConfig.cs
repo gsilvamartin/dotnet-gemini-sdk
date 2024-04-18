@@ -12,5 +12,6 @@ namespace DotnetGeminiSDK.Config
         public string ImageBaseUrl { get; set; } =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision";
         public string ModelBaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta/models";
+        public string EmbeddingBaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta/models";
     }
 }
