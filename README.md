@@ -14,6 +14,8 @@ Welcome to DotnetGeminiSDK, a .NET SDK for interacting with the Google Gemini AP
   - [Get Model](#get-model)
   - [Get All Models](#get-models)
   - [Image Prompt](#image-prompt)
+  - [Embedded](#embedded)
+  - [Batch Embedded](#batch-embedded)
   - [Exception Handling](#exception-handling)
 - [Contributing](#contributing)
 - [License](#license)
@@ -184,6 +186,28 @@ var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
 var base64Image = "image-as-base64";
 var response = await geminiClient.ImagePrompt("Describe this image in details", base64Image, ImageMimeType.Jpeg);
 ```
+
+### Embedded 🪡
+Prompt the Gemini API with a text message and using embedded technique using the `EmbeddedContentsPrompt` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.EmbeddedContentsPrompt("Write a story about a magic backpack");
+```
+
+> [!NOTE]
+> You can use list of messages and list of content to call this method too.
+
+### Batch Embedded 🪡
+Prompt the Gemini API with a text message and using batch embedded technique using the `BatchEmbeddedContentsPrompt` method:
+
+```csharp
+var geminiClient = serviceProvider.GetRequiredService<IGeminiClient>();
+var response = await geminiClient.EmbeddedContentsPrompt("Write a story about a magic backpack");
+```
+
+> [!NOTE]
+> You can use list of messages and list of content to call this method too.
 
 ## Contributing 🤝
 Contributions are welcome! Feel free to open issues or pull requests to enhance the SDK.
