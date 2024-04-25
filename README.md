@@ -39,6 +39,9 @@ dotnet add package DotnetGeminiSDK
 ## Configuration ⚙️
 To use the Gemini SDK, configure the `GoogleGeminiConfig` object. Add the Gemini client to your service collection using `GeminiServiceExtensions`:
 
+> [!NOTE]
+> Only used when using the dependency injection method.
+
 ```csharp
 using DotnetGeminiSDK;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,6 +76,30 @@ public class YourClass
     public YourClass(IGeminiClient geminiClient)
     {
         _geminiClient = geminiClient;
+    }
+
+    public async Task Example()
+    {
+        var response = await _geminiClient.TextPrompt("Text for processing");
+        // Process the response as needed
+    }
+}
+```
+
+### Class Instantiation
+
+If you don't want to use dependency injection, you can instantiate the GeminiClient class, as a constructor parameter, place your settings in the GoogleGeminiConfig instance.
+
+```csharp
+using DotnetGeminiSDK.Client.Interfaces;
+
+public class YourClass
+{
+    private readonly GeminiClient _geminiClient;
+
+    public YourClass()
+    {
+        _geminiClient = new GeminiClient(new GoogleGeminiConfig(){ //Place your settings here });
     }
 
     public async Task Example()
