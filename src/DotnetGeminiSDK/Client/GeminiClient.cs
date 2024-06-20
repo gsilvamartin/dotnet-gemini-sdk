@@ -178,9 +178,10 @@ namespace DotnetGeminiSDK.Client
         /// REF: https://ai.google.dev/tutorials/rest_quickstart#text-only_input
         /// </summary>
         /// <param name="message">Message to be processed as content model</param>
-        /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
-        /// <param name="callback"> A callback to be called when the response is received</param>
+        /// <param name="generationConfig">An optional generation config</param>
+        /// <param name="safetySetting">An optional safety setting</param>
+        /// <param name="callback">A callback to be called when the response is received</param>
+        /// <param name="useSSE">Whether to use server-side events.</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
@@ -188,11 +189,12 @@ namespace DotnetGeminiSDK.Client
             string message,
             Action<string> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null)
+            SafetySetting? safetySetting = null,
+            bool useSSE = false)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
-            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}{(useSSE ? "&alt=sse" : string.Empty)}";
             var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
             return _apiRequester.PostStream(promptUrl, request, callback);
@@ -210,6 +212,7 @@ namespace DotnetGeminiSDK.Client
         /// <param name="generationConfig">A optional generation config</param>
         /// <param name="safetySetting">A optional safety setting</param>
         /// <param name="callback"> A callback to be called when the response is received</param>
+        /// <param name="useSSE">Whether to use server-side events.</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
@@ -217,11 +220,12 @@ namespace DotnetGeminiSDK.Client
             List<Content> messages,
             Action<string> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null)
+            SafetySetting? safetySetting = null,
+            bool useSSE = false)
         {
             if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
-            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
+            var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}{(useSSE ? "&alt=sse" : string.Empty)}";
             var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
             return _apiRequester.PostStream(promptUrl, request, callback);
