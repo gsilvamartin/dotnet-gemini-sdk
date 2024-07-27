@@ -8,6 +8,23 @@ namespace DotnetGeminiSDK.Model.Response
         [JsonProperty("candidates")] public List<Candidate> Candidates { get; set; }
 
         [JsonProperty("promptFeedback")] public PromptFeedback PromptFeedback { get; set; }
+
+
+        /// <summary>
+        /// Returns all of the response texts from the GeminiMessageResponse
+        /// </summary>
+        /// <returns>Returns a list<string> with all the response texts from the GeminiMessageResponse</returns>
+        public List<string> GetResponseText(){
+            var responseList = new List<string>();
+
+            foreach (var candidate in Candidates){
+                if (!string.IsNullOrEmpty(candidate?.Content?.Parts[0]?.Text)){
+                    responseList.Add(candidate?.Content?.Parts[0]?.Text);
+                }
+            }
+
+            return responseList;
+        }
     }
 
     public class Candidate
