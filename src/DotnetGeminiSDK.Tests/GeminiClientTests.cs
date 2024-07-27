@@ -18,11 +18,25 @@ namespace DotnetGeminiSDK.Tests
             _client = new GeminiClient(new GoogleGeminiConfig(), _apiRequesterMock.Object);
         }
 
+
         [Fact]
         public async Task TextPrompt_WithSingleMessage_ReturnsResponse()
         {
+            var part = new Model.Response.Part(){
+                Text = "test response text"
+            };
+            var content = new Model.Response.Content(){
+                Parts = new List<Model.Response.Part>{part}
+            };
+            var candidate = new Candidate(){
+                Content = content
+            };
+            var expectedResponse = new GeminiMessageResponse{
+                Candidates = new List<Model.Response.Candidate>{candidate}
+                };
+
             var message = "Test message";
-            var expectedResponse = new GeminiMessageResponse();
+            
             _apiRequesterMock.Setup(r => r.PostAsync<GeminiMessageResponse>(It.IsAny<string>(), It.IsAny<GeminiMessageRequest>()))
                              .ReturnsAsync(expectedResponse);
 
@@ -30,6 +44,7 @@ namespace DotnetGeminiSDK.Tests
 
             Assert.NotNull(response);
             Assert.Equal(expectedResponse, response);
+            Assert.Equal(part.Text, response.GetResponseText()[0]);
         }
 
         [Fact]
