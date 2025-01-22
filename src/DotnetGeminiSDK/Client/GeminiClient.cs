@@ -108,17 +108,17 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="message">Message to be processed</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(string message,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
-            var request = BuildGeminiRequest(message, generationConfig, safetySetting);
+            var request = BuildGeminiRequest(message, generationConfig, safetySettings);
 
             return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
         }
@@ -132,16 +132,16 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="messages">Messages to be processed</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<string> messages,
-            GenerationConfig? generationConfig = null, List<SafetySetting>? safetySetting = null)
+            GenerationConfig? generationConfig = null, List<SafetySetting>? safetySettings = null)
         {
             if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
-            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+            var request = BuildGeminiRequest(messages, generationConfig, safetySettings);
 
             return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
         }
@@ -155,16 +155,16 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="messages">Messages to be processed as content model</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<Content> messages,
-            GenerationConfig? generationConfig = null, List<SafetySetting>? safetySetting = null)
+            GenerationConfig? generationConfig = null, List<SafetySetting>? safetySettings = null)
         {
             if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
-            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+            var request = BuildGeminiRequest(messages, generationConfig, safetySettings);
 
             return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
         }
@@ -179,7 +179,7 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="message">Message to be processed as content model</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <param name="callback"> A callback to be called when the response is received</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
@@ -188,12 +188,12 @@ namespace DotnetGeminiSDK.Client
             string message,
             Action<string> callback,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
-            var request = BuildGeminiRequest(message, generationConfig, safetySetting);
+            var request = BuildGeminiRequest(message, generationConfig, safetySettings);
 
             return _apiRequester.PostStream(promptUrl, request, callback);
         }
@@ -208,7 +208,7 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="messages">Messages to be processed as content model</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <param name="callback"> A callback to be called when the response is received</param>
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
@@ -217,12 +217,12 @@ namespace DotnetGeminiSDK.Client
             List<Content> messages,
             Action<string> callback,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}";
-            var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
+            var request = BuildGeminiRequest(messages, generationConfig, safetySettings);
 
             return _apiRequester.PostStream(promptUrl, request, callback);
         }
@@ -409,14 +409,14 @@ namespace DotnetGeminiSDK.Client
         /// <param name="base64Image">Base64 image to process</param>
         /// <param name="mimeType">Mime type of the image</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>A GeminiMessageRequest built to sending for api</returns>
         private static GeminiMessageRequest BuildImageGeminiRequest(
             string message,
             string base64Image,
             string mimeType,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             return new GeminiMessageRequest
             {
@@ -443,7 +443,7 @@ namespace DotnetGeminiSDK.Client
                         }
                     },
                 GenerationConfig = generationConfig,
-                SafetySettings = safetySetting
+                SafetySettings = safetySettings
             };
         }
 
@@ -452,18 +452,18 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="messages">Messages to be processed</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>A request containing GeminiMessageRequest</returns>
         private static GeminiMessageRequest BuildGeminiRequest(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             return new GeminiMessageRequest
             {
                 Contents = messages,
                 GenerationConfig = generationConfig,
-                SafetySettings = safetySetting
+                SafetySettings = safetySettings
             };
         }
 
@@ -472,12 +472,12 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="message">Message to be processed</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns>A request containing GeminiMessageRequest</returns>
         private static GeminiMessageRequest BuildGeminiRequest(
             string message,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             return new GeminiMessageRequest
             {
@@ -497,7 +497,7 @@ namespace DotnetGeminiSDK.Client
                         }
                     },
                 GenerationConfig = generationConfig,
-                SafetySettings = safetySetting
+                SafetySettings = safetySettings
             };
         }
 
@@ -506,12 +506,12 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="messages">Messages to be processed</param>
         /// <param name="generationConfig">A optional generation config</param>
-        /// <param name="safetySetting">A optional safety setting</param>
+        /// <param name="safetySettings">A optional safety setting</param>
         /// <returns></returns>
         private static GeminiMessageRequest BuildGeminiRequest(
             IEnumerable<string> messages,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null)
+            List<SafetySetting>? safetySettings = null)
         {
             var content = new Content
             {
@@ -522,7 +522,7 @@ namespace DotnetGeminiSDK.Client
             {
                 Contents = new List<Content> { content },
                 GenerationConfig = generationConfig,
-                SafetySettings = safetySetting
+                SafetySettings = safetySettings
             };
         }
 

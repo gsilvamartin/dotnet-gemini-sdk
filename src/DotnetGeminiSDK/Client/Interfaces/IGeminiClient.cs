@@ -28,33 +28,33 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             string message,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<string> messages,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task StreamTextPrompt(
             string message,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task StreamTextPrompt(
             List<Content> messages,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            List<SafetySetting>? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
