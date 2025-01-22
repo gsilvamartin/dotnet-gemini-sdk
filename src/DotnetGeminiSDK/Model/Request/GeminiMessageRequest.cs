@@ -26,8 +26,8 @@ namespace DotnetGeminiSDK.Model.Request
         [JsonProperty("generationConfig", NullValueHandling = NullValueHandling.Ignore)]
         public GenerationConfig? GenerationConfig { get; set; }
 
-        [JsonProperty("safetySetting", NullValueHandling = NullValueHandling.Ignore)]
-        public SafetySetting? SafetySetting { get; set; }
+        [JsonProperty("safetySettings", NullValueHandling = NullValueHandling.Ignore)]
+        public List<SafetySetting>? SafetySettings { get; set; }
     }
 
     public class GenerationConfig
