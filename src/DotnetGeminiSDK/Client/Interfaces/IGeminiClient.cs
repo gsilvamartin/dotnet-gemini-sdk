@@ -16,45 +16,45 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<GeminiMessageResponse?> TextPrompt(
             string message,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task<GeminiMessageResponse?> TextPrompt(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySettings = null
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             string message,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySetting = null
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<string> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySetting = null
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySetting = null
         );
 
         Task StreamTextPrompt(
             string message,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySetting = null
         );
 
         Task StreamTextPrompt(
             List<Content> messages,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            List<SafetySetting>? safetySetting = null
         );
 
         Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
