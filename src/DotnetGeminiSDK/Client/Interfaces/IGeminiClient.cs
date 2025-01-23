@@ -47,14 +47,16 @@ namespace DotnetGeminiSDK.Client.Interfaces
             string message,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            bool useSSE = false
         );
 
         Task StreamTextPrompt(
             List<Content> messages,
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            bool useSSE = false
         );
 
         Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
