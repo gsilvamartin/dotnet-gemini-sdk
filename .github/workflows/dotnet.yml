@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - release/*
+    tags:
+      - 'v*'
 
 jobs:
   build-and-push:
@@ -14,12 +16,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for SourceLink
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0'
+          dotnet-version: '8.0.x'
 
       - name: Get latest NuGet package version
         run: |
@@ -71,15 +75,49 @@ jobs:
           sed -i "s/<version>.*<\/version>/<version>${NEW_VERSION}<\/version>/" "$nuspec_path"
           cat "$nuspec_path"
 
-      - name: Pack NuGet package
+      - name: Restore dependencies
+        run: dotnet restore src/DotnetGeminiSDK.sln
+
+      - name: Build solution
+        run: dotnet build src/DotnetGeminiSDK.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test src/DotnetGeminiSDK.Tests/DotnetGeminiSDK.Tests.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Pack NuGet package with symbols
         id: pack
         run: |
-          nuspec_path="nuget/dotnet-gemini.nuspec"
-          dotnet pack src/DotnetGeminiSDK/DotnetGeminiSDK.csproj --configuration Release --output nupkg -p:PackageVersion=$NEW_VERSION
-          echo "::set-output name=package_version::$NEW_VERSION"
+          # Create output directory
+          mkdir -p nupkg
+          
+          # Pack main package with symbols and source
+          dotnet pack src/DotnetGeminiSDK/DotnetGeminiSDK.csproj \
+            --configuration Release \
+            --output nupkg \
+            --no-build \
+            --include-symbols \
+            --include-source \
+            -p:PackageVersion=$NEW_VERSION \
+            -p:SymbolPackageFormat=snupkg
+          
+          echo "package_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "Packaged NuGet package version: $NEW_VERSION"
+          
+          # List generated packages
+          ls -la nupkg/
 
       - name: Push NuGet Package
-        run: nuget push **/*.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_API_KEY }}
+        run: |
+          # Push main package
+          dotnet nuget push nupkg/DotnetGeminiSDK.$NEW_VERSION.nupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
+          
+          # Push symbols package
+          dotnet nuget push nupkg/DotnetGeminiSDK.$NEW_VERSION.snupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

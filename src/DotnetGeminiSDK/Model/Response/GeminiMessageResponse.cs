@@ -48,6 +48,12 @@ namespace DotnetGeminiSDK.Model.Response
     public class Part
     {
         [JsonProperty("text")] public string Text { get; set; }
+        
+        [JsonProperty("functionCall", NullValueHandling = NullValueHandling.Ignore)]
+        public FunctionCall? FunctionCall { get; set; }
+        
+        [JsonProperty("functionResponse", NullValueHandling = NullValueHandling.Ignore)]
+        public FunctionResponse? FunctionResponse { get; set; }
     }
 
     public class PromptFeedback
@@ -60,5 +66,25 @@ namespace DotnetGeminiSDK.Model.Response
         [JsonProperty("category")] public string Category { get; set; }
 
         [JsonProperty("probability")] public string Probability { get; set; }
+    }
+    
+    /// <summary>
+    /// Function call from the model
+    /// </summary>
+    public class FunctionCall
+    {
+        [JsonProperty("name")] public string Name { get; set; }
+        
+        [JsonProperty("args")] public Dictionary<string, object> Args { get; set; }
+    }
+    
+    /// <summary>
+    /// Function response to the model
+    /// </summary>
+    public class FunctionResponse
+    {
+        [JsonProperty("name")] public string Name { get; set; }
+        
+        [JsonProperty("response")] public object Response { get; set; }
     }
 }
