@@ -2,10 +2,10 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
     tags: [ 'v*' ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release/*" ]
   release:
     types: [ published ]
 
@@ -32,143 +32,44 @@ jobs:
     - name: Test
       run: dotnet test src/DotnetGeminiSDK.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
-    - name: Get latest version from NuGet
+    - name: Extract version from branch name
       id: get_version
       run: |
-        echo "🔍 Checking latest version on NuGet.org..."
+        echo "🔍 Extracting version from branch name..."
         
-        # Fazer requisição com retry
-        max_attempts=3
-        attempt=1
-        
-        while [ $attempt -le $max_attempts ]; do
-          echo "📡 Attempt $attempt/$max_attempts..."
-          
-          # Fazer requisição
-          response=$(curl -s \
-            -H "User-Agent: DotnetGeminiSDK/2.0.0" \
-            -H "Accept: application/json" \
-            --connect-timeout 30 \
-            --max-time 60 \
-            "https://api.nuget.org/v3-flatcontainer/DotnetGeminiSDK/index.json" 2>/dev/null)
-          
-          # Verificar se a resposta é válida
-          if echo "$response" | grep -q '"versions"'; then
-            echo "✅ Successfully fetched package information"
-            break
-          else
-            echo "⚠️  Invalid response, attempt $attempt/$max_attempts"
-            if [ $attempt -lt $max_attempts ]; then
-              sleep $((attempt * 2))
-            fi
-          fi
-          
-          ((attempt++))
-        done
-        
-        if [ $attempt -gt $max_attempts ]; then
-          echo "❌ Failed to get valid response after $max_attempts attempts"
-          exit 1
-        fi
-        
-        echo "📦 NuGet API Response:"
-        echo "$response"
-        
-        # Verificar se a resposta contém BOM e removê-lo
-        if [[ "$response" =~ ^$'\uFEFF' ]]; then
-          echo "🧹 Removing BOM from response..."
-          response="${response#$'\uFEFF'}"
-        fi
-        
-        # Verificar se a resposta é XML (erro) em vez de JSON
-        if [[ "$response" =~ ^\< ]]; then
-          echo "❌ Received XML error response instead of JSON:"
-          echo "$response"
-          exit 1
-        fi
-        
-        # Parse da versão mais recente usando jq se disponível, senão python
-        echo "🔍 Parsing latest version..."
-        
-        if command -v jq >/dev/null 2>&1; then
-          echo "📊 Using jq for JSON parsing..."
-          latest_version=$(echo "$response" | jq -r '.versions | max_by(split(".") | map(tonumber))')
+        # Extrair versão do nome da branch (ex: release/2.0.0 -> 2.0.0)
+        if [[ "${{ github.ref }}" =~ refs/heads/release/(.+) ]]; then
+          version="${BASH_REMATCH[1]}"
+          echo "✅ Version extracted from branch: $version"
+        elif [[ "${{ github.ref }}" =~ refs/tags/v(.+) ]]; then
+          version="${BASH_REMATCH[1]}"
+          echo "✅ Version extracted from tag: $version"
         else
-          echo "📊 Using python for JSON parsing..."
-          latest_version=$(echo "$response" | python3 -c "
-        import sys, json
-        try:
-            data = json.load(sys.stdin)
-            versions = data.get('versions', [])
-            if not versions:
-                print('')
-                sys.exit(1)
-            
-            # Filtrar versões válidas e ordenar
-            valid_versions = []
-            for v in versions:
-                if v and isinstance(v, str):
-                    try:
-                        parts = v.split('.')
-                        if len(parts) >= 3:
-                            # Converter para tuple de inteiros para ordenação
-                            version_tuple = tuple(int(p) for p in parts[:3])
-                            valid_versions.append((version_tuple, v))
-                    except ValueError:
-                        continue
-            
-            if not valid_versions:
-                print('')
-                sys.exit(1)
-            
-            # Ordenar e pegar a mais recente
-            valid_versions.sort()
-            latest = valid_versions[-1][1]
-            print(latest)
-            
-        except Exception as e:
-            print(f'Error parsing JSON: {e}', file=sys.stderr)
-            sys.exit(1)
-        ")
-        fi
-        
-        if [ $? -ne 0 ] || [ -z "$latest_version" ]; then
-          echo "❌ Error: Unable to determine the latest version from the NuGet API response."
-          echo "📦 Raw response:"
-          echo "$response"
+          echo "❌ Error: Unable to extract version from ref: ${{ github.ref }}"
+          echo "Expected format: refs/heads/release/X.Y.Z or refs/tags/vX.Y.Z"
           exit 1
         fi
         
-        echo "✅ Latest version found: $latest_version"
-        
-        # Parse das partes da versão
-        IFS='.' read -r -a version_parts <<< "$latest_version"
-        echo "📊 Version parts array: ${version_parts[@]}"
-        
-        if [ "${#version_parts[@]}" -lt 3 ]; then
-          echo "❌ Error: Insufficient version parts."
+        # Validar formato da versão (X.Y.Z)
+        if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "❌ Error: Invalid version format: $version"
+          echo "Expected format: X.Y.Z (e.g., 2.0.0)"
           exit 1
         fi
         
-        # Incrementar patch version
-        echo "⬆️  Incrementing patch version..."
-        ((version_parts[2]++))
-        new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
-        
-        echo "📈 Latest version: $latest_version"
-        echo "🆕 New version: $new_version"
+        echo "📊 Version parts: $version"
         
         # Exportar para GitHub Actions
-        echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
-        echo "✅ Version $new_version set for GitHub Actions"
+        echo "NEW_VERSION=$version" >> $GITHUB_ENV
+        echo "✅ Version $version set for GitHub Actions"
         
-        echo "🎉 Final version: $new_version"
+        echo "🎉 Final version: $version"
 
     - name: Pack
       run: dotnet pack src/DotnetGeminiSDK/DotnetGeminiSDK.csproj --configuration Release --no-build --output ./nupkgs --version-suffix ""
 
     - name: Push to NuGet
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')
       run: |
         echo "📦 Publishing to NuGet.org..."
         dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
