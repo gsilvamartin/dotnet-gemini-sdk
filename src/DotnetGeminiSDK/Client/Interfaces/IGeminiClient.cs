@@ -17,35 +17,39 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<GeminiMessageResponse?> TextPrompt(
             string message,
             GenerationConfig? generationConfig = null,
-            CancellationToken cancellationToken,
             SafetySetting? safetySetting = null,
             SystemInstruction? systemInstruction = null,
             List<Tool>? tools = null,
-            ToolConfig? toolConfig = null
+            ToolConfig? toolConfig = null,
+            CancellationToken cancellationToken = default
         );
 
         Task<GeminiMessageResponse?> TextPrompt(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             string message,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<string> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default
         );
 
         Task<GeminiCountTokenMessageResponse?> CountTokens(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default
         );
 
         Task StreamTextPrompt(
@@ -53,7 +57,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            bool useSSE = false
+            bool useSSE = false,
+            CancellationToken cancellationToken = default
         );
 
         Task StreamTextPrompt(
@@ -61,28 +66,29 @@ namespace DotnetGeminiSDK.Client.Interfaces
             Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            bool useSSE = false
+            bool useSSE = false,
+            CancellationToken cancellationToken = default
         );
 
-        Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType);
+        Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType imageMimeType, CancellationToken cancellationToken = default);
 
-        Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image, ImageMimeType imageMimeType);
+        Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image, ImageMimeType imageMimeType, CancellationToken cancellationToken = default);
         
-        Task<GeminiModelResponse?> GetModel(string modelName);
+        Task<GeminiModelResponse?> GetModel(string modelName, CancellationToken cancellationToken = default);
 
-        Task<RootGeminiModelResponse?> GetModels();
+        Task<RootGeminiModelResponse?> GetModels(CancellationToken cancellationToken = default);
 
-        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message, string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
-        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
-        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
+        Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
-        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message, string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
-        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
-        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001");
+        Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message, string model = "models/embedding-001", CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Send a message with function calling support
@@ -98,7 +104,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             List<FunctionDeclaration> functions,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -113,7 +120,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             string message,
             string systemInstruction,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -144,7 +152,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             MediaMimeType mimeType,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -163,7 +172,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             MediaMimeType mimeType,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -180,7 +190,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
             List<MediaFile> mediaFiles,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -193,7 +204,8 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<FileUploadResponse?> UploadFile(
             byte[] fileBytes,
             MediaMimeType mimeType,
-            string fileName
+            string fileName,
+            CancellationToken cancellationToken = default
         );
         
         /// <summary>
@@ -201,13 +213,13 @@ namespace DotnetGeminiSDK.Client.Interfaces
         /// </summary>
         /// <param name="fileUri">File URI from upload response</param>
         /// <returns>File information</returns>
-        Task<FileInfoResponse?> GetFileInfo(string fileUri);
+        Task<FileInfoResponse?> GetFileInfo(string fileUri, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Delete a file from Gemini API
         /// </summary>
         /// <param name="fileUri">File URI to delete</param>
         /// <returns>True if deletion was successful</returns>
-        Task<bool> DeleteFile(string fileUri);
+        Task<bool> DeleteFile(string fileUri, CancellationToken cancellationToken = default);
     }
 }

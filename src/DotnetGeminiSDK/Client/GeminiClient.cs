@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using DotnetGeminiSDK.Client.Interfaces;
 using DotnetGeminiSDK.Config;
@@ -189,7 +190,8 @@ namespace DotnetGeminiSDK.Client
             SafetySetting? safetySetting = null,
             SystemInstruction? systemInstruction = null,
             List<Tool>? tools = null,
-            ToolConfig? toolConfig = null)
+            ToolConfig? toolConfig = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -204,8 +206,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
 
                 if (_config.EnableLogging)
                 {
@@ -239,14 +241,15 @@ namespace DotnetGeminiSDK.Client
         public async Task<GeminiMessageResponse?> TextPrompt(
             List<Content> messages,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null)
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default)
         {
             if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:generateContent?key={_config.ApiKey}";
             var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -263,14 +266,15 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(string message,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null)
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
             var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
-            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -286,14 +290,15 @@ namespace DotnetGeminiSDK.Client
         /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<string> messages,
-            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null)
+            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default)
         {
             if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
             var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -309,14 +314,15 @@ namespace DotnetGeminiSDK.Client
         /// <returns>Returns a GeminiMessageResponse with the counted tokens</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task<GeminiCountTokenMessageResponse?> CountTokens(List<Content> messages,
-            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null)
+            GenerationConfig? generationConfig = null, SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default)
         {
             if (!messages.Any()) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:countTokens?key={_config.ApiKey}";
             var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiCountTokenMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -337,17 +343,18 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="Exception"></exception>
         public Task StreamTextPrompt(
             string message,
-            Action<string> callback,
+            Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            bool useSSE = false)
+            bool useSSE = false,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}{(useSSE ? "&alt=sse" : string.Empty)}";
             var request = BuildGeminiRequest(message, generationConfig, safetySetting);
 
-            return _apiRequester.PostStream(promptUrl, request, callback);
+            return _apiRequester.PostStream(promptUrl, request, callback, cancellationToken);
         }
 
         /// <summary>
@@ -368,17 +375,18 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="Exception"></exception>
         public Task StreamTextPrompt(
             List<Content> messages,
-            Action<string> callback,
+            Action<string?> callback,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            bool useSSE = false)
+            bool useSSE = false,
+            CancellationToken cancellationToken = default)
         {
             if (!messages.Any()) throw new ArgumentException("Messages cannot be empty.");
 
             var promptUrl = $"{_config.TextBaseUrl}:streamGenerateContent?key={_config.ApiKey}{(useSSE ? "&alt=sse" : string.Empty)}";
             var request = BuildGeminiRequest(messages, generationConfig, safetySetting);
 
-            return _apiRequester.PostStream(promptUrl, request, callback);
+            return _apiRequester.PostStream(promptUrl, request, callback, cancellationToken);
         }
 
         /// <summary>
@@ -393,7 +401,8 @@ namespace DotnetGeminiSDK.Client
         /// <returns>Returns a GeminiMessageResponse with all the response fields from api</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType mimeType)
+        public async Task<GeminiMessageResponse?> ImagePrompt(string message, byte[] image, ImageMimeType mimeType,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
             if (image.Length == 0) throw new ArgumentException("Image cannot be empty.");
@@ -402,7 +411,7 @@ namespace DotnetGeminiSDK.Client
             var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
             var request = BuildImageGeminiRequest(message, Convert.ToBase64String(image), mimeTypeString);
 
-            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -418,7 +427,8 @@ namespace DotnetGeminiSDK.Client
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
         public async Task<GeminiMessageResponse?> ImagePrompt(string message, string base64Image,
-            ImageMimeType mimeType)
+            ImageMimeType mimeType,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(message)) throw new ArgumentException("Message cannot be empty.");
             if (string.IsNullOrEmpty(base64Image)) throw new ArgumentException("Image cannot be empty.");
@@ -427,7 +437,7 @@ namespace DotnetGeminiSDK.Client
             var promptUrl = $"{_config.ImageBaseUrl}:generateContent?key={_config.ApiKey}";
             var request = BuildImageGeminiRequest(message, base64Image, mimeTypeString);
 
-            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -438,12 +448,13 @@ namespace DotnetGeminiSDK.Client
         /// <param name="modelName">Model name to find</param>
         /// <returns></returns>
         /// <returns>A GeminiModelResponse containing the model information</returns>
-        public async Task<GeminiModelResponse?> GetModel(string modelName)
+        public async Task<GeminiModelResponse?> GetModel(string modelName,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(modelName)) throw new ArgumentException("Model name cannot be empty.");
 
             var modelUrl = $"{_config.ModelBaseUrl}/{modelName}?key={_config.ApiKey}";
-            return await _apiRequester.GetAsync<GeminiModelResponse>(modelUrl);
+            return await _apiRequester.GetAsync<GeminiModelResponse>(modelUrl, cancellationToken);
         }
 
         /// <summary>
@@ -452,10 +463,11 @@ namespace DotnetGeminiSDK.Client
         /// REF: https://ai.google.dev/tutorials/rest_quickstart#get_model
         /// </summary>
         /// <returns>A List of GeminiModelResponse containing the model information</returns>
-        public async Task<RootGeminiModelResponse?> GetModels()
+        public async Task<RootGeminiModelResponse?> GetModels(
+            CancellationToken cancellationToken = default)
         {
             var modelUrl = $"{_config.ModelBaseUrl}?key={_config.ApiKey}";
-            return await _apiRequester.GetAsync<RootGeminiModelResponse>(modelUrl);
+            return await _apiRequester.GetAsync<RootGeminiModelResponse>(modelUrl, cancellationToken);
         }
 
         /// <summary>
@@ -467,11 +479,12 @@ namespace DotnetGeminiSDK.Client
         /// <param name="model"></param>
         /// <returns>Return GeminiRootEmbeddingResponse containing the batch response for API</returns>
         public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(string message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
             var request = BuildEmbeddedGeminiRequest(message, model);
-            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
 
@@ -484,11 +497,12 @@ namespace DotnetGeminiSDK.Client
         /// <param name="model">Model to be used</param>
         /// <returns>Return GeminiRootEmbeddingResponse containing the batch response for API</returns>
         public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<string> message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
             var request = BuildEmbeddedGeminiRequest(message, model);
-            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -501,11 +515,12 @@ namespace DotnetGeminiSDK.Client
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public async Task<GeminiRootEmbeddingResponse?> EmbeddedContentsPrompt(List<Content> message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}:embedContent?key={_config.ApiKey}";
             var request = BuildGeminiRequest(message);
-            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -517,11 +532,12 @@ namespace DotnetGeminiSDK.Client
         /// <param name="model">Model to be used</param>
         /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
         public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(string message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
             var request = BuildEmbeddedGeminiRequest(message, model);
-            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -533,11 +549,12 @@ namespace DotnetGeminiSDK.Client
         /// <param name="model">Model to be used</param>
         /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
         public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<string> message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
             var request = BuildEmbeddedGeminiRequest(message, model);
-            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -549,11 +566,12 @@ namespace DotnetGeminiSDK.Client
         /// <param name="model">Model to be used</param>
         /// <returns>Return GeminiBatchRootEmbeddingResponse containing the batch response for API</returns>
         public async Task<GeminiBatchRootEmbeddingResponse?> BatchEmbeddedContentsPrompt(List<Content> message,
-            string model = "models/embedding-001")
+            string model = "models/embedding-001",
+            CancellationToken cancellationToken = default)
         {
             var promptUrl = $"{_config.EmbeddingBaseUrl}/{model}/:batchEmbedContent?key={_config.ApiKey}";
             var request = BuildGeminiRequest(message);
-            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request);
+            return await _apiRequester.PostAsync<GeminiBatchRootEmbeddingResponse>(promptUrl, request, cancellationToken);
         }
 
         /// <summary>
@@ -800,7 +818,8 @@ namespace DotnetGeminiSDK.Client
             List<FunctionDeclaration> functions,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null)
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default)
         {
             var tools = new List<Tool>
             {
@@ -815,7 +834,7 @@ namespace DotnetGeminiSDK.Client
                 }
             };
             
-            return await TextPrompt(message, generationConfig, safetySetting, systemInstruction, tools, toolConfig);
+            return await TextPrompt(message, generationConfig, safetySetting, systemInstruction, tools, toolConfig, cancellationToken);
         }
         
         /// <summary>
@@ -830,7 +849,8 @@ namespace DotnetGeminiSDK.Client
             string message,
             string systemInstruction,
             GenerationConfig? generationConfig = null,
-            SafetySetting? safetySetting = null)
+            SafetySetting? safetySetting = null,
+            CancellationToken cancellationToken = default)
         {
             var systemInstructionObj = new SystemInstruction
             {
@@ -840,7 +860,7 @@ namespace DotnetGeminiSDK.Client
                 }
             };
             
-            return await TextPrompt(message, generationConfig, safetySetting, systemInstructionObj);
+            return await TextPrompt(message, generationConfig, safetySetting, systemInstructionObj, null, null, cancellationToken);
         }
         
         /// <summary>
@@ -877,7 +897,8 @@ namespace DotnetGeminiSDK.Client
             MediaMimeType mimeType,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null)
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -897,8 +918,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.video_prompt.duration", duration);
@@ -937,7 +958,8 @@ namespace DotnetGeminiSDK.Client
             MediaMimeType mimeType,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null)
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -957,8 +979,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.audio_prompt.duration", duration);
@@ -995,7 +1017,8 @@ namespace DotnetGeminiSDK.Client
             List<MediaFile> mediaFiles,
             GenerationConfig? generationConfig = null,
             SafetySetting? safetySetting = null,
-            SystemInstruction? systemInstruction = null)
+            SystemInstruction? systemInstruction = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -1014,8 +1037,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.PostAsync<GeminiMessageResponse>(promptUrl, request, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.multimodal_prompt.duration", duration);
@@ -1048,7 +1071,8 @@ namespace DotnetGeminiSDK.Client
         public async Task<FileUploadResponse?> UploadFile(
             byte[] fileBytes,
             MediaMimeType mimeType,
-            string fileName)
+            string fileName,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -1070,8 +1094,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<FileUploadResponse>(uploadUrl, request), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.PostAsync<FileUploadResponse>(uploadUrl, request);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.PostAsync<FileUploadResponse>(uploadUrl, request, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.PostAsync<FileUploadResponse>(uploadUrl, request, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.file_upload.duration", duration);
@@ -1099,7 +1123,8 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="fileUri">File URI from upload response</param>
         /// <returns>File information</returns>
-        public async Task<FileInfoResponse?> GetFileInfo(string fileUri)
+        public async Task<FileInfoResponse?> GetFileInfo(string fileUri,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -1116,8 +1141,8 @@ namespace DotnetGeminiSDK.Client
                 }
 
                 var response = _config.EnableRetry 
-                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.GetAsync<FileInfoResponse>(infoUrl), _config.MaxRetryAttempts, _config.RetryDelayMs)
-                    : await _apiRequester.GetAsync<FileInfoResponse>(infoUrl);
+                    ? await _retryService.ExecuteWithRetryAsync(() => _apiRequester.GetAsync<FileInfoResponse>(infoUrl, cancellationToken), _config.MaxRetryAttempts, _config.RetryDelayMs)
+                    : await _apiRequester.GetAsync<FileInfoResponse>(infoUrl, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.file_info.duration", duration);
@@ -1145,7 +1170,8 @@ namespace DotnetGeminiSDK.Client
         /// </summary>
         /// <param name="fileUri">File URI to delete</param>
         /// <returns>True if deletion was successful</returns>
-        public async Task<bool> DeleteFile(string fileUri)
+        public async Task<bool> DeleteFile(string fileUri,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -1161,7 +1187,7 @@ namespace DotnetGeminiSDK.Client
                     _loggingService.LogInfo("Deleting file", new { fileUri });
                 }
 
-                await _apiRequester.DeleteAsync<object>(deleteUrl);
+                await _apiRequester.DeleteAsync<object>(deleteUrl, cancellationToken);
 
                 var duration = (DateTime.UtcNow - startTime).TotalMilliseconds;
                 _metricsService.RecordTiming("gemini.file_delete.duration", duration);
