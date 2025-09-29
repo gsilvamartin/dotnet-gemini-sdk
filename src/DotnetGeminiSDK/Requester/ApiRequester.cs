@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DotnetGeminiSDK.Requester.Interfaces;
 using DotnetGeminiSDK.Exceptions;
@@ -73,13 +74,14 @@ namespace DotnetGeminiSDK.Requester
         /// Get request to the API with retry policy
         /// </summary>
         /// <param name="url">Url to be requested</param>
+        /// <param name="cancellationToken">Cancellation token for the request</param>
         /// <typeparam name="T">Return type of method</typeparam>
         /// <returns>The result of deserialized response</returns>
-        public async Task<T> GetAsync<T>(string url)
+        public async Task<T> GetAsync<T>(string url, CancellationToken cancellationToken = default)
         {
             _logger?.LogDebug("Making GET request to {Url}", url);
             
-            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.GetAsync(url));
+            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.GetAsync(url, cancellationToken));
             return await HandleResponse<T>(response);
         }
 
@@ -88,14 +90,15 @@ namespace DotnetGeminiSDK.Requester
         /// </summary>
         /// <param name="url">Url to be requested</param>
         /// <param name="data">Data containing body to send</param>
+        /// <param name="cancellationToken">Cancellation token for the request</param>
         /// <typeparam name="T">Return type of method</typeparam>
         /// <returns>The result of deserialized response</returns>
-        public async Task<T> PostAsync<T>(string url, object data)
+        public async Task<T> PostAsync<T>(string url, object data, CancellationToken cancellationToken = default)
         {
             _logger?.LogDebug("Making POST request to {Url}", url);
             
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PostAsync(url, content));
+            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PostAsync(url, content, cancellationToken));
             return await HandleResponse<T>(response);
         }
 
@@ -106,14 +109,15 @@ namespace DotnetGeminiSDK.Requester
         /// <param name="url">Url to be requested</param>
         /// <param name="data">Data containing body to send</param>
         /// <param name="callback"> A callback to be called when the response is received</param>
-        public async Task PostStream(string url, object data, Action<string> callback)
+        /// <param name="cancellationToken">Cancellation token for the request</param>
+        public async Task PostStream(string url, object data, Action<string?> callback, CancellationToken cancellationToken = default)
         {
             _logger?.LogDebug("Making streaming POST request to {Url}", url);
             
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = content };
-            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -121,7 +125,7 @@ namespace DotnetGeminiSDK.Requester
                 var buffer = new byte[8192];
                 using var responseStream = await response.Content.ReadAsStreamAsync();
 
-                while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                 {
                     var chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     callback(chunk);
@@ -140,14 +144,15 @@ namespace DotnetGeminiSDK.Requester
         /// </summary>
         /// <param name="url">Url to be requested</param>
         /// <param name="data">Data containing body to send</param>
+        /// <param name="cancellationToken">Cancellation token for the request</param>
         /// <typeparam name="T">Return type of method</typeparam>
         /// <returns>The result of deserialized response</returns>
-        public async Task<T> PutAsync<T>(string url, object data)
+        public async Task<T> PutAsync<T>(string url, object data, CancellationToken cancellationToken = default)
         {
             _logger?.LogDebug("Making PUT request to {Url}", url);
             
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
-            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PutAsync(url, content));
+            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PutAsync(url, content, cancellationToken));
             return await HandleResponse<T>(response);
         }
 
@@ -155,13 +160,14 @@ namespace DotnetGeminiSDK.Requester
         /// Delete request to the API with retry policy
         /// </summary>
         /// <param name="url">Url to be requested</param>
+        /// <param name="cancellationToken">Cancellation token for the request</param>
         /// <typeparam name="T">Return type of method</typeparam>
         /// <returns>The result of deserialized response</returns>
-        public async Task<T> DeleteAsync<T>(string url)
+        public async Task<T> DeleteAsync<T>(string url, CancellationToken cancellationToken = default)
         {
             _logger?.LogDebug("Making DELETE request to {Url}", url);
             
-            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.DeleteAsync(url));
+            var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.DeleteAsync(url, cancellationToken));
             return await HandleResponse<T>(response);
         }
 
