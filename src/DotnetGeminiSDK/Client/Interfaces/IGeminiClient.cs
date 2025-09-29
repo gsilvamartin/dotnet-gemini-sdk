@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using DotnetGeminiSDK.Model;
 using DotnetGeminiSDK.Model.Request;
 using DotnetGeminiSDK.Model.Response;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Content = DotnetGeminiSDK.Model.Request.Content;
 
 namespace DotnetGeminiSDK.Client.Interfaces
@@ -16,6 +17,7 @@ namespace DotnetGeminiSDK.Client.Interfaces
         Task<GeminiMessageResponse?> TextPrompt(
             string message,
             GenerationConfig? generationConfig = null,
+            CancellationToken cancellationToken,
             SafetySetting? safetySetting = null,
             SystemInstruction? systemInstruction = null,
             List<Tool>? tools = null,
