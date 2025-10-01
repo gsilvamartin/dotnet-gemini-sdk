@@ -9,7 +9,7 @@
     <description>Interact effortlessly with the Google Gemini API using this .NET SDK. It provides a comprehensive set of functionalities for text and image prompt generation, making it simple to integrate Gemini AI capabilities into your applications.</description>
     <dependencies>
       <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.0"/>
-      <dependency id="Newtonsoft.Json" version="13.0.3"/>
+      <dependency id="System.Text.Json" version="9.0.9/>
     </dependencies>
   </metadata>
 </package>

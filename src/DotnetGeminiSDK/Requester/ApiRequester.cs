@@ -1,13 +1,12 @@
+using DotnetGeminiSDK.Exceptions;
+using DotnetGeminiSDK.Requester.Interfaces;
+using Microsoft.Extensions.Logging;
+using Polly;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using DotnetGeminiSDK.Requester.Interfaces;
-using DotnetGeminiSDK.Exceptions;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Polly;
-using Polly.Extensions.Http;
 
 namespace DotnetGeminiSDK.Requester
 {
@@ -24,7 +23,7 @@ namespace DotnetGeminiSDK.Requester
         {
             _httpClient = httpClientFactory.CreateClient("GeminiClient");
             _logger = logger;
-            
+
             // Configure retry policy with exponential backoff
             _retryPolicy = Policy
                 .Handle<HttpRequestException>()
@@ -35,7 +34,7 @@ namespace DotnetGeminiSDK.Requester
                     sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                     onRetry: (outcome, timespan, retryCount, context) =>
                     {
-                        _logger?.LogWarning("Retry {RetryCount} after {Delay}ms. Reason: {Reason}", 
+                        _logger?.LogWarning("Retry {RetryCount} after {Delay}ms. Reason: {Reason}",
                             retryCount, timespan.TotalMilliseconds, outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString());
                     });
         }
@@ -50,7 +49,7 @@ namespace DotnetGeminiSDK.Requester
         {
             _httpClient = new HttpClient();
             _logger = null;
-            
+
             // Basic retry policy for legacy constructor
             _retryPolicy = Policy
                 .Handle<HttpRequestException>()
@@ -78,7 +77,7 @@ namespace DotnetGeminiSDK.Requester
         public async Task<T> GetAsync<T>(string url)
         {
             _logger?.LogDebug("Making GET request to {Url}", url);
-            
+
             var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.GetAsync(url));
             return await HandleResponse<T>(response);
         }
@@ -93,8 +92,8 @@ namespace DotnetGeminiSDK.Requester
         public async Task<T> PostAsync<T>(string url, object data)
         {
             _logger?.LogDebug("Making POST request to {Url}", url);
-            
-            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+
+            var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PostAsync(url, content));
             return await HandleResponse<T>(response);
         }
@@ -109,8 +108,8 @@ namespace DotnetGeminiSDK.Requester
         public async Task PostStream(string url, object data, Action<string> callback)
         {
             _logger?.LogDebug("Making streaming POST request to {Url}", url);
-            
-            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+
+            var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
 
             using var request = new HttpRequestMessage(HttpMethod.Post, url) { Content = content };
             using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
@@ -145,8 +144,8 @@ namespace DotnetGeminiSDK.Requester
         public async Task<T> PutAsync<T>(string url, object data)
         {
             _logger?.LogDebug("Making PUT request to {Url}", url);
-            
-            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+
+            var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
             var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.PutAsync(url, content));
             return await HandleResponse<T>(response);
         }
@@ -160,7 +159,7 @@ namespace DotnetGeminiSDK.Requester
         public async Task<T> DeleteAsync<T>(string url)
         {
             _logger?.LogDebug("Making DELETE request to {Url}", url);
-            
+
             var response = await _retryPolicy.ExecuteAsync(async () => await _httpClient.DeleteAsync(url));
             return await HandleResponse<T>(response);
         }
@@ -179,7 +178,7 @@ namespace DotnetGeminiSDK.Requester
             if (!response.IsSuccessStatusCode)
             {
                 _logger?.LogError("API request failed with status {StatusCode}: {Content}", response.StatusCode, content);
-                
+
                 // Map HTTP status codes to specific Gemini exceptions
                 throw response.StatusCode switch
                 {
@@ -196,7 +195,7 @@ namespace DotnetGeminiSDK.Requester
 
             try
             {
-                return JsonConvert.DeserializeObject<T>(content) ??
+                return JsonSerializer.Deserialize<T>(content) ??
                        throw new GeminiException("Cannot deserialize response from API");
             }
             catch (JsonException ex)
