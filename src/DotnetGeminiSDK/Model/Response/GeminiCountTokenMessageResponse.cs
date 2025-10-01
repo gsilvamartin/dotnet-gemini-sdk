@@ -1,10 +1,10 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Response
 {
     public class GeminiCountTokenMessageResponse
     {
-        [JsonProperty("totalTokens")]
+        [JsonPropertyName("totalTokens")]
         public long TotalTokens { get; set; }
     }
 }

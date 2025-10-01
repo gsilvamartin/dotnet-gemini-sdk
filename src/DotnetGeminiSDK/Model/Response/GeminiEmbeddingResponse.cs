@@ -1,23 +1,26 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Response
 {
     public class GeminiBatchRootEmbeddingResponse
     {
-        [JsonProperty("embeddings", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("embeddings")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<GeminiEmbeddingResponse?> Embedding { get; set; }
     }
     
     public class GeminiRootEmbeddingResponse
     {
-        [JsonProperty("embedding", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("embedding")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public GeminiEmbeddingResponse? Embedding { get; set; }
     }
 
     public class GeminiEmbeddingResponse
     {
-        [JsonProperty("values", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("values")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<object?> Values { get; set; } 
     }
 }

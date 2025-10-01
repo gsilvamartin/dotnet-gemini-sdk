@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Response
 {
     public class GeminiMessageResponse
     {
-        [JsonProperty("candidates")] public List<Candidate> Candidates { get; set; }
+        [JsonPropertyName("candidates")] public List<Candidate> Candidates { get; set; }
 
-        [JsonProperty("promptFeedback")] public PromptFeedback PromptFeedback { get; set; }
+        [JsonPropertyName("promptFeedback")] public PromptFeedback PromptFeedback { get; set; }
 
 
         /// <summary>
@@ -29,43 +29,45 @@ namespace DotnetGeminiSDK.Model.Response
 
     public class Candidate
     {
-        [JsonProperty("content")] public Content Content { get; set; }
+        [JsonPropertyName("content")] public Content Content { get; set; }
 
-        [JsonProperty("finishReason")] public string FinishReason { get; set; }
+        [JsonPropertyName("finishReason")] public string FinishReason { get; set; }
 
-        [JsonProperty("index")] public int Index { get; set; }
+        [JsonPropertyName("index")] public int Index { get; set; }
 
-        [JsonProperty("safetyRatings")] public List<SafetyRating> SafetyRatings { get; set; }
+        [JsonPropertyName("safetyRatings")] public List<SafetyRating> SafetyRatings { get; set; }
     }
 
     public class Content
     {
-        [JsonProperty("parts")] public List<Part> Parts { get; set; }
+        [JsonPropertyName("parts")] public List<Part> Parts { get; set; }
 
-        [JsonProperty("role")] public string Role { get; set; }
+        [JsonPropertyName("role")] public string Role { get; set; }
     }
 
     public class Part
     {
-        [JsonProperty("text")] public string Text { get; set; }
+        [JsonPropertyName("text")] public string Text { get; set; }
         
-        [JsonProperty("functionCall", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("functionCall")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public FunctionCall? FunctionCall { get; set; }
         
-        [JsonProperty("functionResponse", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("functionResponse")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public FunctionResponse? FunctionResponse { get; set; }
     }
 
     public class PromptFeedback
     {
-        [JsonProperty("safetyRatings")] public List<SafetyRating> SafetyRatings { get; set; }
+        [JsonPropertyName("safetyRatings")] public List<SafetyRating> SafetyRatings { get; set; }
     }
 
     public class SafetyRating
     {
-        [JsonProperty("category")] public string Category { get; set; }
+        [JsonPropertyName("category")] public string Category { get; set; }
 
-        [JsonProperty("probability")] public string Probability { get; set; }
+        [JsonPropertyName("probability")] public string Probability { get; set; }
     }
     
     /// <summary>
@@ -73,9 +75,9 @@ namespace DotnetGeminiSDK.Model.Response
     /// </summary>
     public class FunctionCall
     {
-        [JsonProperty("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
         
-        [JsonProperty("args")] public Dictionary<string, object> Args { get; set; }
+        [JsonPropertyName("args")] public Dictionary<string, object> Args { get; set; }
     }
     
     /// <summary>
@@ -83,8 +85,8 @@ namespace DotnetGeminiSDK.Model.Response
     /// </summary>
     public class FunctionResponse
     {
-        [JsonProperty("name")] public string Name { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
         
-        [JsonProperty("response")] public object Response { get; set; }
+        [JsonPropertyName("response")] public object Response { get; set; }
     }
 }

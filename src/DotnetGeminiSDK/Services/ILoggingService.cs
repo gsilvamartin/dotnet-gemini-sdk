@@ -1,5 +1,5 @@
 using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace DotnetGeminiSDK.Services
 {
@@ -19,12 +19,14 @@ namespace DotnetGeminiSDK.Services
     /// </summary>
     public class ConsoleLoggingService : ILoggingService
     {
+        private static readonly JsonSerializerOptions JsonIndentedOptions = new() { WriteIndented = true };
+
         public void LogInfo(string message, object? data = null)
         {
             Console.WriteLine($"[INFO] {message}");
             if (data != null)
             {
-                Console.WriteLine($"[DATA] {JsonConvert.SerializeObject(data, Formatting.Indented)}");
+                Console.WriteLine($"[DATA] {JsonSerializer.Serialize(data, JsonIndentedOptions)}");
             }
         }
 
@@ -33,7 +35,7 @@ namespace DotnetGeminiSDK.Services
             Console.WriteLine($"[WARNING] {message}");
             if (data != null)
             {
-                Console.WriteLine($"[DATA] {JsonConvert.SerializeObject(data, Formatting.Indented)}");
+                Console.WriteLine($"[DATA] {JsonSerializer.Serialize(data, JsonIndentedOptions)}");
             }
         }
 
@@ -46,7 +48,7 @@ namespace DotnetGeminiSDK.Services
             }
             if (data != null)
             {
-                Console.WriteLine($"[DATA] {JsonConvert.SerializeObject(data, Formatting.Indented)}");
+                Console.WriteLine($"[DATA] {JsonSerializer.Serialize(data, JsonIndentedOptions)}");
             }
         }
 
@@ -55,7 +57,7 @@ namespace DotnetGeminiSDK.Services
             Console.WriteLine($"[DEBUG] {message}");
             if (data != null)
             {
-                Console.WriteLine($"[DATA] {JsonConvert.SerializeObject(data, Formatting.Indented)}");
+                Console.WriteLine($"[DATA] {JsonSerializer.Serialize(data, JsonIndentedOptions)}");
             }
         }
     }

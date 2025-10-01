@@ -1,44 +1,55 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Response
 {
     public class RootGeminiModelResponse
     {
-        [JsonProperty("models", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("models")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IEnumerable<GeminiModelResponse?> GeminiModelResponses { get; set; } = new List<GeminiModelResponse>();
     }
 
     public class GeminiModelResponse
     {
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("name")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Name { get; set; }
 
-        [JsonProperty("version", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("version")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Version { get; set; }
 
-        [JsonProperty("displayName", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("displayName")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string DisplayName { get; set; }
 
-        [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("description")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Description { get; set; }
 
-        [JsonProperty("inputTokenLimit", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("inputTokenLimit")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int InputTokenLimit { get; set; }
 
-        [JsonProperty("outputTokenLimit", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("outputTokenLimit")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int OutputTokenLimit { get; set; }
 
-        [JsonProperty("supportedGenerationMethods", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("supportedGenerationMethods")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string> SupportedGenerationMethods { get; set; }
 
-        [JsonProperty("temperature", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("temperature")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double Temperature { get; set; }
 
-        [JsonProperty("topP", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("topP")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double TopP { get; set; }
 
-        [JsonProperty("topK", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("topK")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double TopK { get; set; }
     }
 }

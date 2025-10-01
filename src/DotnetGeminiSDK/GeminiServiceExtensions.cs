@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using DotnetGeminiSDK.Client;
 using DotnetGeminiSDK.Client.Interfaces;
 using DotnetGeminiSDK.Config;
@@ -10,9 +5,11 @@ using DotnetGeminiSDK.Requester;
 using DotnetGeminiSDK.Requester.Interfaces;
 using DotnetGeminiSDK.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Polly;
-using Polly.Extensions.Http;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace DotnetGeminiSDK
 {

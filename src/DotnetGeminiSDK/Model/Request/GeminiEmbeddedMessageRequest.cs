@@ -1,20 +1,20 @@
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Request
 {
     public class GeminiEmbeddedMultipleRequest
     {
-        [JsonProperty("requests")]
+        [JsonPropertyName("requests")]
         public IEnumerable<GeminiEmbeddedMessageRequest> Requests { get; set; }
     }
 
     public class GeminiEmbeddedMessageRequest
     {
-        [JsonProperty("model")]
+        [JsonPropertyName("model")]
         public string Model { get; set; }
         
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public Content Content { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DotnetGeminiSDK.Model.Response
 {
@@ -11,7 +10,7 @@ namespace DotnetGeminiSDK.Model.Response
         /// <summary>
         /// The uploaded file information
         /// </summary>
-        [JsonProperty("file")]
+        [JsonPropertyName("file")]
         public FileInfo File { get; set; } = new();
     }
     
@@ -23,55 +22,55 @@ namespace DotnetGeminiSDK.Model.Response
         /// <summary>
         /// File name
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
         
         /// <summary>
         /// File URI for referencing in API calls
         /// </summary>
-        [JsonProperty("uri")]
+        [JsonPropertyName("uri")]
         public string Uri { get; set; } = string.Empty;
         
         /// <summary>
         /// File MIME type
         /// </summary>
-        [JsonProperty("mimeType")]
+        [JsonPropertyName("mimeType")]
         public string MimeType { get; set; } = string.Empty;
         
         /// <summary>
         /// File size in bytes
         /// </summary>
-        [JsonProperty("sizeBytes")]
+        [JsonPropertyName("sizeBytes")]
         public string SizeBytes { get; set; } = string.Empty;
         
         /// <summary>
         /// File creation time
         /// </summary>
-        [JsonProperty("createTime")]
+        [JsonPropertyName("createTime")]
         public string CreateTime { get; set; } = string.Empty;
         
         /// <summary>
         /// File update time
         /// </summary>
-        [JsonProperty("updateTime")]
+        [JsonPropertyName("updateTime")]
         public string UpdateTime { get; set; } = string.Empty;
         
         /// <summary>
         /// File expiration time
         /// </summary>
-        [JsonProperty("expirationTime")]
+        [JsonPropertyName("expirationTime")]
         public string ExpirationTime { get; set; } = string.Empty;
         
         /// <summary>
         /// File state
         /// </summary>
-        [JsonProperty("state")]
+        [JsonPropertyName("state")]
         public string State { get; set; } = string.Empty;
         
         /// <summary>
         /// File display name
         /// </summary>
-        [JsonProperty("displayName")]
+        [JsonPropertyName("displayName")]
         public string DisplayName { get; set; } = string.Empty;
     }
     
@@ -83,7 +82,7 @@ namespace DotnetGeminiSDK.Model.Response
         /// <summary>
         /// The file information
         /// </summary>
-        [JsonProperty("file")]
+        [JsonPropertyName("file")]
         public FileInfo File { get; set; } = new();
     }
 }
