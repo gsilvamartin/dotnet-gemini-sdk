@@ -54,7 +54,30 @@ namespace DotnetGeminiSDK
             services.AddSingleton<ICacheService, MemoryCacheService>();
             services.AddSingleton<IMetricsService, ConsoleMetricsService>();
             services.AddSingleton<IValidationService, ValidationService>();
-            services.AddSingleton<IGeminiClient, GeminiClient>();
+            // Register IGeminiClient with an explicit factory so the container does not
+            // have to guess between GeminiClient's multiple public constructors, which
+            // otherwise results in an InvalidOperationException (ambiguous constructors)
+            // when both the SDK's services and the host's ILogger/IHttpClientFactory are
+            // resolvable (e.g. in a Blazor or ASP.NET host).
+            services.AddSingleton<IGeminiClient>(serviceProvider =>
+            {
+                var config = serviceProvider.GetRequiredService<GoogleGeminiConfig>();
+                var apiRequester = serviceProvider.GetRequiredService<IApiRequester>();
+                var loggingService = serviceProvider.GetRequiredService<ILoggingService>();
+                var retryService = serviceProvider.GetRequiredService<IRetryService>();
+                var cacheService = serviceProvider.GetRequiredService<ICacheService>();
+                var metricsService = serviceProvider.GetRequiredService<IMetricsService>();
+                var validationService = serviceProvider.GetRequiredService<IValidationService>();
+
+                return new GeminiClient(
+                    config,
+                    apiRequester,
+                    loggingService,
+                    retryService,
+                    cacheService,
+                    metricsService,
+                    validationService);
+            });
 
             return services;
         }
